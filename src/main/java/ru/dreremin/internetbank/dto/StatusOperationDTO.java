@@ -6,4 +6,6 @@ import lombok.Data;
 public class StatusOperationDTO {
 
     private final int status;
+
+    private final String message;
 }

@@ -1,6 +1,8 @@
 package ru.dreremin.internetbank.dto;
 
+import ru.dreremin.internetbank.exceptions.IncorrectNumberException;
+
 public interface BankAccountDTO {
 
-    boolean isValidInstance();
+    void validation() throws IncorrectNumberException, Throwable;
 }

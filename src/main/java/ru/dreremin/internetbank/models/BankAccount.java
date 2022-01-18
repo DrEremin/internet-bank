@@ -25,6 +25,11 @@ public class BankAccount {
 
     public BankAccount () {}
 
+    public BankAccount (long user_id) {
+        this.userId = user_id;
+        currentBalance = BigDecimal.valueOf(0.0);
+    }
+
     public void setId(long id) {
         this.id = id;
     }

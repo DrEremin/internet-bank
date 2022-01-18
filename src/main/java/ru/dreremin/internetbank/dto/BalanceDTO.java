@@ -9,4 +9,6 @@ import java.math.BigDecimal;
 public class BalanceDTO {
 
     private final BigDecimal balance;
+
+    private final String status;
 }

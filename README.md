@@ -1,4 +1,4 @@
-# <center>Internet-bank</center>
+# Internet-bank
 <br>
 <hr>
 
@@ -54,27 +54,27 @@ three attributes: 'id' (primary key), 'user_id', 'current_balance'.<br>
         </tr>
     </thread>
     <tbody>
-        <tr>
-            <td>id (primary key)</td>
-            <td>bigserial</td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>user_id</td>
-            <td>bigint</td>
-            <td>not null, user_id > 0, unique</td>
-            <td></td>
-        </tr>
-        <tr> 
-            <td>current_balance</td>
-            <td>numeric(20.2)</td>
-            <td>not null, current_balance > 0</td>
-            <td>0.00</td>
-        </tr>
+    <tr>
+        <td>id (primary key)</td>
+        <td>bigserial</td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>user_id</td>
+        <td>bigint</td>
+        <td>not null, user_id > 0, unique</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>current_balance</td>
+        <td>numeric(20.2)</td>
+        <td>not null, current_balance > 0</td>
+        <td>0.00</td>
+    </tr>
     </tbody>
 </table>
 
-### Diagram of database
-![diagram](screenshots/diagram.png)
+### Logical data model
+![diagram](screenshots/dlm.png)
 

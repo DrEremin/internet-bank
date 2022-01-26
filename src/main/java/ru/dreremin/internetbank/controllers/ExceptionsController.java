@@ -10,6 +10,10 @@ import ru.dreremin.internetbank.exceptions.IncorrectNumberException;
 import ru.dreremin.internetbank.exceptions.NotEnoughMoneyException;
 import ru.dreremin.internetbank.exceptions.UniquenessViolationException;
 
+import java.time.DateTimeException;
+import java.time.format.DateTimeParseException;
+import java.time.zone.ZoneRulesException;
+
 @ControllerAdvice
 public class ExceptionsController {
 
@@ -38,18 +42,46 @@ public class ExceptionsController {
     }
 
     @ExceptionHandler(UniquenessViolationException.class)
-    public ResponseEntity<StatusOperationDTO> handleNotEnoughMoneyException(
+    public ResponseEntity<StatusOperationDTO> handleUniquenessViolationException(
             UniquenessViolationException e) {
         return new ResponseEntity<>(
                 new StatusOperationDTO(0, e.getMessage()),
                 HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(DateTimeParseException.class)
+    public ResponseEntity<StatusOperationDTO> handleDateTimeParseException(
+            DateTimeParseException e) {
+        return new ResponseEntity<>(
+                new StatusOperationDTO(-1, "Incorrect date or time format"),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DateTimeException.class)
+    public ResponseEntity<StatusOperationDTO> handleDateTimeException(
+            DateTimeException e) {
+        return new ResponseEntity<>(
+                new StatusOperationDTO(-1, "Zone id has an invalid format"),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ZoneRulesException.class)
+    public ResponseEntity<StatusOperationDTO> handleZoneRulesException(
+            ZoneRulesException e) {
+        return new ResponseEntity<>(
+                new StatusOperationDTO(
+                        -1, "Zone id is a region ID that cannot be found"),
+                HttpStatus.BAD_REQUEST);
     }
 }
 
 /*
 * getBalance():
 *       1. Некорректный Id пользователя  (-1) - IncorrectNumberException       400
-*       2. Нет пользователя с таким Id   (0) -  DataMissingException           404
+*       2. Некорректный формат даты|времени(-1) - DateTimeParseException       400
+*       3. Некорректный формат временной зоны(-1) - DateTimeException          400
+*       4. Временная зона не найдена (-1) - ZoneRulesException                 400
+*       3. Нет пользователя с таким Id   (0) -  DataMissingException           404
 * Успех: (1)                                                                   200
 * =================================================================================
 * takeMoney():
@@ -66,3 +98,9 @@ public class ExceptionsController {
 * Успех: (1)                                                                   200
 * =================================================================================
 * */
+
+/*
+* ZoneId.of():       DateTimeException      Runtime
+*                    ZoneRulesException     Runtime
+* ZonedDateTime: --
+*  */

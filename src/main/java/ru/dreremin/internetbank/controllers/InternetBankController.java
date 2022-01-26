@@ -1,6 +1,6 @@
 package ru.dreremin.internetbank.controllers;
 
-import lombok.*;
+import java.math.BigDecimal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.dreremin.internetbank.dto.BalanceDTO;
@@ -12,17 +12,17 @@ import ru.dreremin.internetbank.exceptions.IncorrectNumberException;
 import ru.dreremin.internetbank.exceptions.NotEnoughMoneyException;
 import ru.dreremin.internetbank.exceptions.UniquenessViolationException;
 import ru.dreremin.internetbank.services.BankAccountService;
-import java.math.BigDecimal;
 
 @Slf4j
 @RestController
 @RequestMapping("/bank")
-@AllArgsConstructor
-@Getter
-@Setter
 public class InternetBankController {
 
-    private BankAccountService bankAccountService;
+    private final BankAccountService bankAccountService;
+
+    public InternetBankController(BankAccountService bankAccountService) {
+        this.bankAccountService = bankAccountService;
+    }
 
     @PostMapping(value="/get-balance", consumes="application/json")
     public BalanceDTO getBalance (

@@ -1,6 +1,7 @@
 package ru.dreremin.internetbank.models;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import javax.persistence.Id;
@@ -15,9 +16,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 
-@Getter
-@AllArgsConstructor
 @Entity
 @Table(name = "operation")
 public class Operation {
@@ -68,4 +68,35 @@ public class Operation {
         this.timeAndDateOfOperation = ZonedDateTime.of(
                 localDate, localTime, zoneId);
     }
+
+    public long getId() { return id; }
+
+    public long getAccountId() { return accountId; }
+
+    public int getOperationTypeId() { return operationTypeId; }
+
+    public ZonedDateTime getTimeAndDateOfOperation() {
+        return timeAndDateOfOperation;
+    }
+
+    public BigDecimal getAmountOfOperation() {
+        return amountOfOperation;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Operation)) return false;
+        Operation operation = (Operation) o;
+        return getId() == operation.getId()
+                && getAccountId() == operation.getAccountId()
+                && getOperationTypeId() == operation.getOperationTypeId()
+                && Objects.equals(getTimeAndDateOfOperation(),
+                        operation.getTimeAndDateOfOperation())
+                && Objects.equals(getAmountOfOperation(),
+                        operation.getAmountOfOperation());
+    }
+
+    @Override
+    public int hashCode() { return Objects.hash(getId()); }
 }

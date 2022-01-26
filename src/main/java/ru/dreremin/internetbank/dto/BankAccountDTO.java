@@ -1,14 +1,10 @@
 package ru.dreremin.internetbank.dto;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import lombok.Getter;
-import ru.dreremin.internetbank.exceptions.IncorrectNumberException;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import ru.dreremin.internetbank.exceptions.IncorrectNumberException;
 
-@Getter
 public abstract class BankAccountDTO {
 
     protected final long userId;
@@ -34,4 +30,14 @@ public abstract class BankAccountDTO {
     }
 
     abstract public void validation() throws IncorrectNumberException;
+
+    public long getUserId() { return userId; }
+
+    public boolean isRealInputNumber() { return isRealInputNumber; }
+
+    public LocalDate getLocalDate() { return localDate; }
+
+    public LocalTime getLocalTime() { return localTime; }
+
+    public ZoneId getZoneId() { return zoneId; }
 }

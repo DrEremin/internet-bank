@@ -1,15 +1,15 @@
 package ru.dreremin.internetbank.dto.impl;
 
+import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import ru.dreremin.internetbank.dto.BankAccountDTO;
 import ru.dreremin.internetbank.exceptions.IncorrectNumberException;
 
 @Slf4j
 @JsonIgnoreProperties({"isRealInputNumber"})
-public class UserIdDTO extends BankAccountDTO {
+public class UserIdDTO extends BankAccountDTO implements Serializable {
 
     @JsonCreator
     public UserIdDTO (double userId,
@@ -37,4 +37,5 @@ public class UserIdDTO extends BankAccountDTO {
             throw e;
         }
     }
+
 }

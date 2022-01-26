@@ -1,17 +1,19 @@
 package ru.dreremin.internetbank.dto.impl;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.extern.slf4j.Slf4j;
 import ru.dreremin.internetbank.dto.BankAccountDTO;
 import ru.dreremin.internetbank.exceptions.IncorrectNumberException;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 @Slf4j
-@Getter
-public class UserIdAndMoneyDTO extends BankAccountDTO {
+@JsonIgnoreProperties({"isRealInputNumber"})
+public class UserIdAndMoneyDTO
+        extends BankAccountDTO
+        implements Serializable {
 
     private final BigDecimal money;
 
@@ -47,4 +49,6 @@ public class UserIdAndMoneyDTO extends BankAccountDTO {
             throw e;
         }
     }
+
+    public BigDecimal getMoney() { return money; }
 }

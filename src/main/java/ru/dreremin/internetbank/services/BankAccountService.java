@@ -1,14 +1,16 @@
 package ru.dreremin.internetbank.services;
 
-import lombok.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import java.math.BigDecimal;
-import java.util.Optional;
-import java.math.RoundingMode;
-
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import ru.dreremin.internetbank.dto.impl.UserIdAndMoneyAndRecipientIdDTO;
 import ru.dreremin.internetbank.dto.impl.UserIdAndMoneyDTO;
 import ru.dreremin.internetbank.dto.impl.UserIdDTO;
 import ru.dreremin.internetbank.exceptions.DataMissingException;
@@ -19,19 +21,40 @@ import ru.dreremin.internetbank.repositories.BankAccountRepository;
 
 @Slf4j
 @Service
-@AllArgsConstructor
-@Getter
-@Setter
 public class BankAccountService {
 
-    private BankAccountRepository bankAccountRepository;
-    private OperationService operationService;
+    private final BankAccountRepository bankAccountRepository;
+    private final OperationService operationService;
+    private final TransferRecipientService transferRecipientService;
+
+    public BankAccountService(
+            BankAccountRepository bankAccountRepository,
+            OperationService operationService,
+            TransferRecipientService transferRecipientService) {
+
+        this.bankAccountRepository = bankAccountRepository;
+        this.operationService = operationService;
+        this.transferRecipientService = transferRecipientService;
+    }
+
+    public BankAccountRepository getBankAccountRepository() {
+        return bankAccountRepository;
+    }
+
+    public OperationService getOperationService() {
+        return operationService;
+    }
+
+    public TransferRecipientService getTransferRecipientService() {
+        return transferRecipientService;
+    }
 
     @Transactional(
             isolation = Isolation.SERIALIZABLE,
             rollbackFor = DataMissingException.class)
-    public BigDecimal getBalance(UserIdDTO userIdDTO)
-            throws DataMissingException {
+
+    public BigDecimal getBalance(UserIdDTO userIdDTO) throws
+            DataMissingException {
 
         Optional<BankAccount> optionalBankAccount = bankAccountRepository
                 .getBankAccountByUserId(userIdDTO.getUserId());
@@ -55,8 +78,9 @@ public class BankAccountService {
     @Transactional(
             isolation = Isolation.SERIALIZABLE,
             rollbackFor = DataMissingException.class)
-    public void putMoney(UserIdAndMoneyDTO userIdAndMoneyDTO)
-            throws DataMissingException {
+
+    public void putMoney(UserIdAndMoneyDTO userIdAndMoneyDTO) throws
+            DataMissingException {
 
         Optional<BankAccount> optionalBankAccount = bankAccountRepository
                 .getBankAccountByUserId(userIdAndMoneyDTO.getUserId());
@@ -79,14 +103,17 @@ public class BankAccountService {
                 userIdAndMoneyDTO.getMoney());
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = {
-            DataMissingException.class,
-            NotEnoughMoneyException.class })
-    public void takeMoney(UserIdAndMoneyDTO userIdAndMoneyDTO)
-            throws DataMissingException, NotEnoughMoneyException {
+    @Transactional(isolation =
+            Isolation.SERIALIZABLE, rollbackFor =
+            { DataMissingException.class, NotEnoughMoneyException.class })
 
-        Optional<BankAccount> optionalBankAccount = bankAccountRepository
-                .getBankAccountByUserId(userIdAndMoneyDTO.getUserId());
+    public void takeMoney(UserIdAndMoneyDTO userIdAndMoneyDTO) throws
+            DataMissingException, NotEnoughMoneyException {
+
+        Optional<BankAccount> optionalBankAccount =
+                bankAccountRepository.getBankAccountByUserId(
+                        userIdAndMoneyDTO.getUserId());
+
         if (optionalBankAccount.isEmpty()) {
             String message = "User with this id does not exist";
             log.error(message);
@@ -128,11 +155,56 @@ public class BankAccountService {
         bankAccountRepository.save(bankAccount);
     }
 
+    @Transactional(isolation =
+            Isolation.SERIALIZABLE, rollbackFor =
+            { DataMissingException.class, NotEnoughMoneyException.class })
+
+    public void transferMoney(
+            UserIdAndMoneyAndRecipientIdDTO userIdAndMoneyAndRecipientIdDTO)
+            throws DataMissingException, NotEnoughMoneyException {
+
+        Optional<BankAccount> optionalBankAccountSender =
+                bankAccountRepository.findById(
+                        userIdAndMoneyAndRecipientIdDTO.getUserId());
+        Optional<BankAccount> optionalBankAccountRecipient =
+                bankAccountRepository.findById(
+                        userIdAndMoneyAndRecipientIdDTO.getRecipientId());
+
+        try {
+            if (optionalBankAccountSender.isEmpty()) {
+                throw new DataMissingException(
+                        "Sender with this id does not exist");
+            }
+            if (optionalBankAccountRecipient.isEmpty()) {
+                throw new DataMissingException(
+                        "Recipient with this id does not exist");
+            }
+            reduceBalance(userIdAndMoneyAndRecipientIdDTO.getMoney(),
+                    optionalBankAccountSender.get());
+            increaseBalance(userIdAndMoneyAndRecipientIdDTO.getMoney(),
+                    optionalBankAccountRecipient.get());
+        } catch (DataMissingException | NotEnoughMoneyException e) {
+            log.error(e.getMessage());
+            throw e;
+        }
+
+        long operationId = operationService.saveOperation(
+                userIdAndMoneyAndRecipientIdDTO,
+                optionalBankAccountSender.get().getId(),
+                5,
+                userIdAndMoneyAndRecipientIdDTO.getMoney());
+
+        transferRecipientService.saveTransferRecipient(
+                optionalBankAccountRecipient.get().getId(),
+                operationId);
+    }
+
     public void createAccount(UserIdDTO userIdDTO)
             throws UniquenessViolationException {
 
-        Optional<BankAccount> optionalBankAccount = bankAccountRepository
-                .getBankAccountByUserId(userIdDTO.getUserId());
+        Optional<BankAccount> optionalBankAccount =
+                bankAccountRepository.getBankAccountByUserId(
+                        userIdDTO.getUserId());
 
         if (optionalBankAccount.isPresent()) {
             String message = "User account with this id already exists";
@@ -145,8 +217,9 @@ public class BankAccountService {
     public void deleteAccount(UserIdDTO userIdDTO)
             throws DataMissingException {
 
-        Optional<BankAccount> optionalBankAccount = bankAccountRepository
-                .getBankAccountByUserId(userIdDTO.getUserId());
+        Optional<BankAccount> optionalBankAccount =
+                bankAccountRepository.getBankAccountByUserId(
+                        userIdDTO.getUserId());
 
         if (optionalBankAccount.isEmpty()) {
             String message = "User with this id does not exist";

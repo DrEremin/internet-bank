@@ -1,12 +1,14 @@
 package ru.dreremin.internetbank.repositories;
 
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import ru.dreremin.internetbank.models.BankAccount;
 
-import java.util.Optional;
 
 @Repository
-public interface BankAccountRepository extends CrudRepository<BankAccount, Long> {
+public interface BankAccountRepository extends JpaRepository<BankAccount, Long> {
     Optional<BankAccount> getBankAccountByUserId(Long userId);
 }

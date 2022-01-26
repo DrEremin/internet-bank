@@ -13,6 +13,10 @@ public class TransferRecipient {
 
     public TransferRecipient() {}
 
+    public TransferRecipient(TransferRecipientPkey id) {
+        this.id = id;
+    }
+
     public TransferRecipientPkey getId() { return id; }
 
     @Override

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.dreremin.internetbank.dto.BalanceDTO;
 import ru.dreremin.internetbank.dto.StatusOperationDTO;
+import ru.dreremin.internetbank.dto.impl.UserIdAndMoneyAndRecipientIdDTO;
 import ru.dreremin.internetbank.dto.impl.UserIdAndMoneyDTO;
 import ru.dreremin.internetbank.dto.impl.UserIdDTO;
 import ru.dreremin.internetbank.exceptions.DataMissingException;
@@ -61,6 +62,18 @@ public class InternetBankController {
 
         return new StatusOperationDTO(1, "Ok");
     }
+
+    /*@PatchMapping(value="/transfer-money", consumes="application/json")
+    public StatusOperationDTO transferMoney(
+            @RequestBody UserIdAndMoneyAndRecipientIdDTO
+                    userIdAndMoneyAndRecipientIdDTO) throws
+            IncorrectNumberException,
+            DataMissingException,
+            NotEnoughMoneyException {
+
+        userIdAndMoneyAndRecipientIdDTO.validation();
+
+    }*/
 
     @PutMapping(value="/create-account", consumes="application/json")
     public StatusOperationDTO createAccount(@RequestBody UserIdDTO userIdDTO)

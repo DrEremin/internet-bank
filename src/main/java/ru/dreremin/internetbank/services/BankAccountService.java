@@ -60,9 +60,16 @@ public class BankAccountService {
             throw new DataMissingException(message);
         }
 
+        BankAccount bankAccount = optionalBankAccount.get();
         increaseBalance(
                 userIdAndMoneyDTO.getMoney(),
-                optionalBankAccount.get());
+                bankAccount);
+
+        operationService.saveOperation(
+                userIdAndMoneyDTO,
+                bankAccount.getId(),
+                2,
+                userIdAndMoneyDTO.getMoney());
     }
 
     public void takeMoney(UserIdAndMoneyDTO userIdAndMoneyDTO)
@@ -76,7 +83,14 @@ public class BankAccountService {
             throw new DataMissingException(message);
         }
 
-        reduceBalance(userIdAndMoneyDTO.getMoney(), optionalBankAccount.get());
+        BankAccount bankAccount = optionalBankAccount.get();
+        reduceBalance(userIdAndMoneyDTO.getMoney(), bankAccount);
+
+        operationService.saveOperation(
+                userIdAndMoneyDTO,
+                bankAccount.getId(),
+                3,
+                userIdAndMoneyDTO.getMoney());
     }
 
     private void reduceBalance(BigDecimal money, BankAccount bankAccount)

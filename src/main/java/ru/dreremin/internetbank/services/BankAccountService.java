@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import java.math.RoundingMode;
 
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.dreremin.internetbank.dto.impl.UserIdAndMoneyDTO;
 import ru.dreremin.internetbank.dto.impl.UserIdDTO;
 import ru.dreremin.internetbank.exceptions.DataMissingException;
@@ -23,9 +25,11 @@ import ru.dreremin.internetbank.repositories.BankAccountRepository;
 public class BankAccountService {
 
     private BankAccountRepository bankAccountRepository;
-
     private OperationService operationService;
 
+    @Transactional(
+            isolation = Isolation.SERIALIZABLE,
+            rollbackFor = DataMissingException.class)
     public BigDecimal getBalance(UserIdDTO userIdDTO)
             throws DataMissingException {
 
@@ -48,6 +52,9 @@ public class BankAccountService {
         return bankAccount.getCurrentBalance();
     }
 
+    @Transactional(
+            isolation = Isolation.SERIALIZABLE,
+            rollbackFor = DataMissingException.class)
     public void putMoney(UserIdAndMoneyDTO userIdAndMoneyDTO)
             throws DataMissingException {
 
@@ -72,6 +79,9 @@ public class BankAccountService {
                 userIdAndMoneyDTO.getMoney());
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = {
+            DataMissingException.class,
+            NotEnoughMoneyException.class })
     public void takeMoney(UserIdAndMoneyDTO userIdAndMoneyDTO)
             throws DataMissingException, NotEnoughMoneyException {
 

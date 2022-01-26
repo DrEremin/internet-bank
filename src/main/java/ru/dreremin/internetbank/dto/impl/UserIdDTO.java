@@ -8,19 +8,16 @@ import ru.dreremin.internetbank.dto.BankAccountDTO;
 import ru.dreremin.internetbank.exceptions.IncorrectNumberException;
 
 @Slf4j
-@Getter
 @JsonIgnoreProperties({"isRealInputNumber"})
-public class UserIdDTO implements BankAccountDTO {
-
-    private final long userId;
-
-    private final boolean isRealInputNumber;
+public class UserIdDTO extends BankAccountDTO {
 
     @JsonCreator
-    public UserIdDTO (double userId) {
+    public UserIdDTO (double userId,
+                      String localDate,
+                      String localTime,
+                      String zoneId) {
 
-        this.userId = (long) userId;
-        isRealInputNumber = (this.userId - userId) != 0;
+        super(userId, localDate, localTime, zoneId);
     }
 
     @Override

@@ -24,20 +24,28 @@ public class BankAccountService {
 
     private BankAccountRepository bankAccountRepository;
 
+    private OperationService operationService;
+
     public BigDecimal getBalance(UserIdDTO userIdDTO)
             throws DataMissingException {
 
-        Optional<BigDecimal> balance = bankAccountRepository
-                .getBankAccountByUserId(userIdDTO.getUserId())
-                .map(BankAccount::getCurrentBalance);
+        Optional<BankAccount> optionalBankAccount = bankAccountRepository
+                .getBankAccountByUserId(userIdDTO.getUserId());
 
-        if (balance.isEmpty()) {
+        if (optionalBankAccount.isEmpty()) {
             String message = "User with this id does not exist";
             log.error(message);
             throw new DataMissingException(message);
         }
 
-        return balance.get();
+        BankAccount bankAccount = optionalBankAccount.get();
+        operationService.saveOperation(
+                userIdDTO,
+                bankAccount.getId(),
+                1,
+                BigDecimal.valueOf(0.0));
+
+        return bankAccount.getCurrentBalance();
     }
 
     public void putMoney(UserIdAndMoneyDTO userIdAndMoneyDTO)

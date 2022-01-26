@@ -11,18 +11,18 @@ import java.math.RoundingMode;
 
 @Slf4j
 @Getter
-public class UserIdAndMoneyDTO implements BankAccountDTO {
-
-    private final long userId;
+public class UserIdAndMoneyDTO extends BankAccountDTO {
 
     private final BigDecimal money;
 
-    private final boolean isRealInputNumber;
-
     @JsonCreator
-    public UserIdAndMoneyDTO(double userId, BigDecimal money) {
-        this.userId = (long) userId;
-        isRealInputNumber = (this.userId - userId) != 0;
+    public UserIdAndMoneyDTO(double userId,
+                             BigDecimal money,
+                             String localDate,
+                             String localTime,
+                             String zoneId) {
+
+        super(userId, localDate, localTime, zoneId);
         this.money = money.setScale(2, RoundingMode.DOWN);
     }
 

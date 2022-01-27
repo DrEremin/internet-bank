@@ -10,5 +10,5 @@ import ru.dreremin.internetbank.models.BankAccount;
 
 @Repository
 public interface BankAccountRepository extends JpaRepository<BankAccount, Long> {
-    Optional<BankAccount> getBankAccountByUserId(Long userId);
+    Optional<BankAccount> getBankAccountByClientId(Long clientId);
 }

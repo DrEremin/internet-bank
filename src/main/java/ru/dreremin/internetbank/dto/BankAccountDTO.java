@@ -8,7 +8,7 @@ import ru.dreremin.internetbank.exceptions.SameIdException;
 
 public abstract class BankAccountDTO {
 
-    protected final long userId;
+    protected final long clientId;
 
     protected final boolean isRealInputNumber;
 
@@ -18,13 +18,13 @@ public abstract class BankAccountDTO {
 
     protected final ZoneId zoneId;
 
-    public BankAccountDTO (double userId,
+    public BankAccountDTO (double clientId,
                       String localDate,
                       String localTime,
                       String zoneId) {
 
-        this.userId = (long) userId;
-        isRealInputNumber = (this.userId - userId) != 0;
+        this.clientId = (long) clientId;
+        isRealInputNumber = (this.clientId - clientId) != 0;
         this.localDate = LocalDate.parse(localDate);
         this.localTime = LocalTime.parse(localTime);
         this.zoneId = ZoneId.of(zoneId);
@@ -34,7 +34,7 @@ public abstract class BankAccountDTO {
             IncorrectNumberException,
             SameIdException;
 
-    public long getUserId() { return userId; }
+    public long getClientId() { return clientId; }
 
     public boolean isRealInputNumber() { return isRealInputNumber; }
 

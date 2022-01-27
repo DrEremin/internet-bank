@@ -2,17 +2,15 @@ package ru.dreremin.internetbank.services;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import ru.dreremin.internetbank.dto.impl.UserIdAndMoneyAndRecipientIdDTO;
-import ru.dreremin.internetbank.dto.impl.UserIdAndMoneyDTO;
-import ru.dreremin.internetbank.dto.impl.UserIdDTO;
+import ru.dreremin.internetbank.dto.impl.ClientIdDTO;
+import ru.dreremin.internetbank.dto.impl.SenderIdAndMoneyAndRecipientIdDTO;
+import ru.dreremin.internetbank.dto.impl.ClientIdAndMoneyDTO;
+import ru.dreremin.internetbank.enums.OperationTypes;
 import ru.dreremin.internetbank.exceptions.DataMissingException;
 import ru.dreremin.internetbank.exceptions.NotEnoughMoneyException;
 import ru.dreremin.internetbank.exceptions.UniquenessViolationException;
@@ -38,14 +36,17 @@ public class BankAccountService {
     }
 
     public BankAccountRepository getBankAccountRepository() {
+
         return bankAccountRepository;
     }
 
     public OperationService getOperationService() {
+
         return operationService;
     }
 
     public TransferRecipientService getTransferRecipientService() {
+
         return transferRecipientService;
     }
 
@@ -53,11 +54,11 @@ public class BankAccountService {
             isolation = Isolation.SERIALIZABLE,
             rollbackFor = DataMissingException.class)
 
-    public BigDecimal getBalance(UserIdDTO userIdDTO) throws
+    public BigDecimal getBalance(ClientIdDTO clientIdDTO) throws
             DataMissingException {
 
         Optional<BankAccount> optionalBankAccount = bankAccountRepository
-                .getBankAccountByUserId(userIdDTO.getUserId());
+                .getBankAccountByClientId(clientIdDTO.getClientId());
 
         if (optionalBankAccount.isEmpty()) {
             String message = "User with this id does not exist";
@@ -67,9 +68,9 @@ public class BankAccountService {
 
         BankAccount bankAccount = optionalBankAccount.get();
         operationService.saveOperation(
-                userIdDTO,
+                clientIdDTO,
                 bankAccount.getId(),
-                1,
+                OperationTypes.GET_BALANCE.getValue(),
                 BigDecimal.valueOf(0.0));
 
         return bankAccount.getCurrentBalance();
@@ -79,11 +80,11 @@ public class BankAccountService {
             isolation = Isolation.SERIALIZABLE,
             rollbackFor = DataMissingException.class)
 
-    public void putMoney(UserIdAndMoneyDTO userIdAndMoneyDTO) throws
+    public void putMoney(ClientIdAndMoneyDTO userIdAndMoneyDTO) throws
             DataMissingException {
 
         Optional<BankAccount> optionalBankAccount = bankAccountRepository
-                .getBankAccountByUserId(userIdAndMoneyDTO.getUserId());
+                .getBankAccountByClientId(userIdAndMoneyDTO.getClientId());
 
         if (optionalBankAccount.isEmpty()) {
             String message = "User with this id does not exist";
@@ -99,7 +100,7 @@ public class BankAccountService {
         operationService.saveOperation(
                 userIdAndMoneyDTO,
                 bankAccount.getId(),
-                2,
+                OperationTypes.PUT_MONEY.getValue(),
                 userIdAndMoneyDTO.getMoney());
     }
 
@@ -107,12 +108,12 @@ public class BankAccountService {
             Isolation.SERIALIZABLE, rollbackFor =
             { DataMissingException.class, NotEnoughMoneyException.class })
 
-    public void takeMoney(UserIdAndMoneyDTO userIdAndMoneyDTO) throws
+    public void takeMoney(ClientIdAndMoneyDTO userIdAndMoneyDTO) throws
             DataMissingException, NotEnoughMoneyException {
 
         Optional<BankAccount> optionalBankAccount =
-                bankAccountRepository.getBankAccountByUserId(
-                        userIdAndMoneyDTO.getUserId());
+                bankAccountRepository.getBankAccountByClientId(
+                        userIdAndMoneyDTO.getClientId());
 
         if (optionalBankAccount.isEmpty()) {
             String message = "User with this id does not exist";
@@ -126,7 +127,7 @@ public class BankAccountService {
         operationService.saveOperation(
                 userIdAndMoneyDTO,
                 bankAccount.getId(),
-                3,
+                OperationTypes.TAKE_MONEY.getValue(),
                 userIdAndMoneyDTO.getMoney());
     }
 
@@ -160,15 +161,15 @@ public class BankAccountService {
             { DataMissingException.class, NotEnoughMoneyException.class })
 
     public void transferMoney(
-            UserIdAndMoneyAndRecipientIdDTO userIdAndMoneyAndRecipientIdDTO)
+            SenderIdAndMoneyAndRecipientIdDTO senderIdAndMoneyAndRecipientIdDTO)
             throws DataMissingException, NotEnoughMoneyException {
 
         Optional<BankAccount> optionalBankAccountSender =
-                bankAccountRepository.getBankAccountByUserId(
-                        userIdAndMoneyAndRecipientIdDTO.getUserId());
+                bankAccountRepository.getBankAccountByClientId(
+                        senderIdAndMoneyAndRecipientIdDTO.getClientId());
         Optional<BankAccount> optionalBankAccountRecipient =
-                bankAccountRepository.getBankAccountByUserId(
-                        userIdAndMoneyAndRecipientIdDTO.getRecipientId());
+                bankAccountRepository.getBankAccountByClientId(
+                        senderIdAndMoneyAndRecipientIdDTO.getRecipientId());
 
         try {
             if (optionalBankAccountSender.isEmpty()) {
@@ -179,9 +180,9 @@ public class BankAccountService {
                 throw new DataMissingException(
                         "Recipient with this id does not exist");
             }
-            reduceBalance(userIdAndMoneyAndRecipientIdDTO.getMoney(),
+            reduceBalance(senderIdAndMoneyAndRecipientIdDTO.getMoney(),
                     optionalBankAccountSender.get());
-            increaseBalance(userIdAndMoneyAndRecipientIdDTO.getMoney(),
+            increaseBalance(senderIdAndMoneyAndRecipientIdDTO.getMoney(),
                     optionalBankAccountRecipient.get());
         } catch (DataMissingException | NotEnoughMoneyException e) {
             log.error(e.getMessage());
@@ -189,37 +190,37 @@ public class BankAccountService {
         }
 
         long operationId = operationService.saveOperation(
-                userIdAndMoneyAndRecipientIdDTO,
+                senderIdAndMoneyAndRecipientIdDTO,
                 optionalBankAccountSender.get().getId(),
-                5,
-                userIdAndMoneyAndRecipientIdDTO.getMoney());
+                OperationTypes.TRANSFER_MONEY.getValue(),
+                senderIdAndMoneyAndRecipientIdDTO.getMoney());
 
         transferRecipientService.saveTransferRecipient(
                 optionalBankAccountRecipient.get().getId(),
                 operationId);
     }
 
-    public void createAccount(UserIdDTO userIdDTO)
+    public void createAccount(ClientIdDTO clientIdDTO)
             throws UniquenessViolationException {
 
         Optional<BankAccount> optionalBankAccount =
-                bankAccountRepository.getBankAccountByUserId(
-                        userIdDTO.getUserId());
+                bankAccountRepository.getBankAccountByClientId(
+                        clientIdDTO.getClientId());
 
         if (optionalBankAccount.isPresent()) {
             String message = "User account with this id already exists";
             log.error(message);
             throw new UniquenessViolationException(message);
         }
-        bankAccountRepository.save(new BankAccount(userIdDTO.getUserId()));
+        bankAccountRepository.save(new BankAccount(clientIdDTO.getClientId()));
     }
 
-    public void deleteAccount(UserIdDTO userIdDTO)
+    public void deleteAccount(ClientIdDTO clientIdDTO)
             throws DataMissingException {
 
         Optional<BankAccount> optionalBankAccount =
-                bankAccountRepository.getBankAccountByUserId(
-                        userIdDTO.getUserId());
+                bankAccountRepository.getBankAccountByClientId(
+                        clientIdDTO.getClientId());
 
         if (optionalBankAccount.isEmpty()) {
             String message = "User with this id does not exist";

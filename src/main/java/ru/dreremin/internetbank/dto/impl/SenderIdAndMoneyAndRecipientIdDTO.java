@@ -13,7 +13,7 @@ import ru.dreremin.internetbank.exceptions.SameIdException;
 @Slf4j
 @JsonIgnoreProperties(
         { "isRealInputNumber", "isRealInputNumberOfRecipientId" })
-public class UserIdAndMoneyAndRecipientIdDTO
+public class SenderIdAndMoneyAndRecipientIdDTO
         extends BankAccountDTO
         implements Serializable {
 
@@ -22,12 +22,12 @@ public class UserIdAndMoneyAndRecipientIdDTO
     private final boolean isRealInputNumberOfRecipientId;
 
     @JsonCreator
-    public UserIdAndMoneyAndRecipientIdDTO(double userId,
-                                           double recipientId,
-                                           BigDecimal money,
-                                           String localDate,
-                                           String localTime,
-                                           String zoneId) {
+    public SenderIdAndMoneyAndRecipientIdDTO(double userId,
+                                             double recipientId,
+                                             BigDecimal money,
+                                             String localDate,
+                                             String localTime,
+                                             String zoneId) {
 
         super(userId, localDate, localTime, zoneId);
         this.money = money.setScale(2, RoundingMode.DOWN);
@@ -51,7 +51,7 @@ public class UserIdAndMoneyAndRecipientIdDTO
                                 "id must not be real number");
             }
 
-            if (userId <= 0 || recipientId <= 0) {
+            if (clientId <= 0 || recipientId <= 0) {
                 throw new IncorrectNumberException(
                         "Value of user id or recipient " +
                                 "id must not be less than 1");
@@ -62,7 +62,7 @@ public class UserIdAndMoneyAndRecipientIdDTO
                         "Value of money must not be less than 0.01");
             }
 
-            if (userId == recipientId) {
+            if (clientId == recipientId) {
                 throw new SameIdException(
                         "The sender's id is equal to the recipient's id");
             }

@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.dreremin.internetbank.dto.BalanceDTO;
 import ru.dreremin.internetbank.dto.StatusOperationDTO;
-import ru.dreremin.internetbank.dto.impl.UserIdAndMoneyAndRecipientIdDTO;
-import ru.dreremin.internetbank.dto.impl.UserIdAndMoneyDTO;
-import ru.dreremin.internetbank.dto.impl.UserIdDTO;
+import ru.dreremin.internetbank.dto.impl.ClientIdDTO;
+import ru.dreremin.internetbank.dto.impl.SenderIdAndMoneyAndRecipientIdDTO;
+import ru.dreremin.internetbank.dto.impl.ClientIdAndMoneyDTO;
 import ru.dreremin.internetbank.exceptions.*;
 import ru.dreremin.internetbank.services.BankAccountService;
 
@@ -24,7 +24,7 @@ public class InternetBankController {
 
     @PostMapping(value="/get-balance", consumes="application/json")
     public BalanceDTO getBalance (
-            @RequestBody UserIdDTO userIdDTO)
+            @RequestBody ClientIdDTO userIdDTO)
             throws IncorrectNumberException, DataMissingException {
 
         userIdDTO.validation();
@@ -36,7 +36,7 @@ public class InternetBankController {
 
     @PatchMapping(value="/put-money", consumes="application/json")
     public StatusOperationDTO putMoney(
-            @RequestBody UserIdAndMoneyDTO userIdAndMoneyDTO)
+            @RequestBody ClientIdAndMoneyDTO userIdAndMoneyDTO)
             throws IncorrectNumberException, DataMissingException {
 
         userIdAndMoneyDTO.validation();
@@ -48,7 +48,7 @@ public class InternetBankController {
 
     @PatchMapping(value="/take-money", consumes="application/json")
     public StatusOperationDTO takeMoney(
-            @RequestBody UserIdAndMoneyDTO userIdAndMoneyDTO) throws
+            @RequestBody ClientIdAndMoneyDTO userIdAndMoneyDTO) throws
             IncorrectNumberException,
             DataMissingException,
             NotEnoughMoneyException {
@@ -62,21 +62,21 @@ public class InternetBankController {
 
     @PatchMapping(value="/transfer-money", consumes="application/json")
     public StatusOperationDTO transferMoney(
-            @RequestBody UserIdAndMoneyAndRecipientIdDTO
-                    userIdAndMoneyAndRecipientIdDTO) throws
+            @RequestBody SenderIdAndMoneyAndRecipientIdDTO
+                    senderIdAndMoneyAndRecipientIdDTO) throws
             IncorrectNumberException,
             DataMissingException,
             NotEnoughMoneyException,
             SameIdException {
 
-        userIdAndMoneyAndRecipientIdDTO.validation();
-        bankAccountService.transferMoney(userIdAndMoneyAndRecipientIdDTO);
+        senderIdAndMoneyAndRecipientIdDTO.validation();
+        bankAccountService.transferMoney(senderIdAndMoneyAndRecipientIdDTO);
         log.info("Transfer of money operation was completed successfully");
         return new StatusOperationDTO(1, "Ok");
     }
 
     @PutMapping(value="/create-account", consumes="application/json")
-    public StatusOperationDTO createAccount(@RequestBody UserIdDTO userIdDTO)
+    public StatusOperationDTO createAccount(@RequestBody ClientIdDTO userIdDTO)
             throws IncorrectNumberException, UniquenessViolationException {
         userIdDTO.validation();
         bankAccountService.createAccount(userIdDTO);
@@ -85,7 +85,7 @@ public class InternetBankController {
     }
 
     @DeleteMapping(value="/delete-account", consumes="application/json")
-    public StatusOperationDTO deleteAccount(@RequestBody UserIdDTO userIdDTO)
+    public StatusOperationDTO deleteAccount(@RequestBody ClientIdDTO userIdDTO)
             throws IncorrectNumberException, DataMissingException{
         userIdDTO.validation();
         bankAccountService.deleteAccount(userIdDTO);

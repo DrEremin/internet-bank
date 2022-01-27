@@ -14,8 +14,8 @@ public class BankAccount {
     @Column
     private long id;
 
-    @Column(name = "user_id")
-    private long userId;
+    @Column(name = "client_id")
+    private long clientId;
 
     @Column(name = "current_balance")
     private BigDecimal currentBalance;
@@ -23,14 +23,14 @@ public class BankAccount {
     public BankAccount () {}
 
     public BankAccount (long user_id) {
-        this.userId = user_id;
+        this.clientId = user_id;
         currentBalance = BigDecimal.valueOf(0.0);
     }
 
     public void setId(long id) { this.id = id; }
 
     public void setUserId(long userId) {
-        this.userId = userId;
+        this.clientId = userId;
     }
     public void setCurrentBalance(BigDecimal currentBalance) {
         this.currentBalance = currentBalance.setScale(2, RoundingMode.DOWN);
@@ -38,7 +38,7 @@ public class BankAccount {
 
     public long getId() { return id; }
 
-    public long getUserId() { return userId; }
+    public long getUserId() { return clientId; }
 
     public BigDecimal getCurrentBalance() { return currentBalance; }
 

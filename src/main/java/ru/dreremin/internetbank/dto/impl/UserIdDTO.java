@@ -37,5 +37,4 @@ public class UserIdDTO extends BankAccountDTO implements Serializable {
             throw e;
         }
     }
-
 }

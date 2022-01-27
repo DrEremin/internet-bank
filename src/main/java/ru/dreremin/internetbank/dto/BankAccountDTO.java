@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import ru.dreremin.internetbank.exceptions.IncorrectNumberException;
+import ru.dreremin.internetbank.exceptions.SameIdException;
 
 public abstract class BankAccountDTO {
 
@@ -29,7 +30,9 @@ public abstract class BankAccountDTO {
         this.zoneId = ZoneId.of(zoneId);
     }
 
-    abstract public void validation() throws IncorrectNumberException;
+    abstract public void validation() throws
+            IncorrectNumberException,
+            SameIdException;
 
     public long getUserId() { return userId; }
 

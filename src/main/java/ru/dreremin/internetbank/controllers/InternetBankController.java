@@ -8,10 +8,7 @@ import ru.dreremin.internetbank.dto.StatusOperationDTO;
 import ru.dreremin.internetbank.dto.impl.UserIdAndMoneyAndRecipientIdDTO;
 import ru.dreremin.internetbank.dto.impl.UserIdAndMoneyDTO;
 import ru.dreremin.internetbank.dto.impl.UserIdDTO;
-import ru.dreremin.internetbank.exceptions.DataMissingException;
-import ru.dreremin.internetbank.exceptions.IncorrectNumberException;
-import ru.dreremin.internetbank.exceptions.NotEnoughMoneyException;
-import ru.dreremin.internetbank.exceptions.UniquenessViolationException;
+import ru.dreremin.internetbank.exceptions.*;
 import ru.dreremin.internetbank.services.BankAccountService;
 
 @Slf4j
@@ -63,17 +60,20 @@ public class InternetBankController {
         return new StatusOperationDTO(1, "Ok");
     }
 
-    /*@PatchMapping(value="/transfer-money", consumes="application/json")
+    @PatchMapping(value="/transfer-money", consumes="application/json")
     public StatusOperationDTO transferMoney(
             @RequestBody UserIdAndMoneyAndRecipientIdDTO
                     userIdAndMoneyAndRecipientIdDTO) throws
             IncorrectNumberException,
             DataMissingException,
-            NotEnoughMoneyException {
+            NotEnoughMoneyException,
+            SameIdException {
 
         userIdAndMoneyAndRecipientIdDTO.validation();
-
-    }*/
+        bankAccountService.transferMoney(userIdAndMoneyAndRecipientIdDTO);
+        log.info("Transfer of money operation was completed successfully");
+        return new StatusOperationDTO(1, "Ok");
+    }
 
     @PutMapping(value="/create-account", consumes="application/json")
     public StatusOperationDTO createAccount(@RequestBody UserIdDTO userIdDTO)

@@ -164,10 +164,10 @@ public class BankAccountService {
             throws DataMissingException, NotEnoughMoneyException {
 
         Optional<BankAccount> optionalBankAccountSender =
-                bankAccountRepository.findById(
+                bankAccountRepository.getBankAccountByUserId(
                         userIdAndMoneyAndRecipientIdDTO.getUserId());
         Optional<BankAccount> optionalBankAccountRecipient =
-                bankAccountRepository.findById(
+                bankAccountRepository.getBankAccountByUserId(
                         userIdAndMoneyAndRecipientIdDTO.getRecipientId());
 
         try {

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.extern.slf4j.Slf4j;
 import ru.dreremin.internetbank.dto.BankAccountDTO;
 import ru.dreremin.internetbank.exceptions.IncorrectNumberException;
+import ru.dreremin.internetbank.exceptions.SameIdException;
 
 @Slf4j
 @JsonIgnoreProperties(
@@ -36,7 +37,9 @@ public class UserIdAndMoneyAndRecipientIdDTO
     }
 
     @Override
-    public void validation() throws IncorrectNumberException {
+    public void validation() throws
+            IncorrectNumberException,
+            SameIdException {
 
         try {
 
@@ -59,7 +62,12 @@ public class UserIdAndMoneyAndRecipientIdDTO
                         "Value of money must not be less than 0.01");
             }
 
-        } catch (IncorrectNumberException e) {
+            if (userId == recipientId) {
+                throw new SameIdException(
+                        "The sender's id is equal to the recipient's id");
+            }
+
+        } catch (IncorrectNumberException | SameIdException e) {
             log.error(e.toString());
             throw e;
         }
@@ -69,7 +77,4 @@ public class UserIdAndMoneyAndRecipientIdDTO
 
     public BigDecimal getMoney() { return money; }
 
-    public boolean isRealInputNumberOfRecipientId() {
-        return isRealInputNumberOfRecipientId;
-    }
 }

@@ -1,5 +1,7 @@
 package ru.dreremin.internetbank.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.lang.Nullable;
 
 import java.math.BigDecimal;
@@ -9,6 +11,7 @@ import java.util.Optional;
 import javax.persistence.*;
 
 @Entity
+@JsonIgnoreProperties({"id"})
 //@Table(name = "operation_description")
 public class OperationDescription {
 
@@ -26,6 +29,7 @@ public class OperationDescription {
     @Column(name = "transaction_amount")
     private BigDecimal transactionAmount;
 
+    @JsonProperty("senderAccountId")
     @Column(name = "account_id")
     private long accountId;
 
@@ -61,9 +65,10 @@ public class OperationDescription {
 
     public long getRecipientAccountId() { return recipientAccountId; }
 
-   /* public void removingNullFromRecipientAccountId() {
-        this.recipientAccountId = Optional.ofNullable(this.recipientAccountId).orElse((long)0);
-    }*/
+    public void removingNullFromRecipientAccountId() {
+        this.recipientAccountId =
+                Optional.ofNullable(this.recipientAccountId).orElse((long)0);
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -90,20 +95,15 @@ public class OperationDescription {
 
     @Override
     public String toString() {
-        return new StringBuilder()
-                .append("[")
-                .append(id)
-                .append("\t")
-                .append(dateTime)
-                .append("\t")
-                .append(operationName)
-                .append("\t")
-                .append(transactionAmount)
-                .append("\t")
-                .append(accountId)
-                .append("\t")
-                .append(recipientAccountId)
-                .append("]")
-                .toString();
+        return String.format("DATE/TIME/ZONE: %-40s " +
+                        " OPERATION TYPE: %-30s " +
+                        " AMOUNT: %15s " +
+                        " SENDER'S ACCOUNT ID: %-10d " +
+                        " RECIPIENT'S ACCOUNT ID: %-10d",
+                dateTime.toString(),
+                operationName,
+                transactionAmount.toString(),
+                accountId,
+                Optional.ofNullable(recipientAccountId).orElse((long)0));
     }
 }

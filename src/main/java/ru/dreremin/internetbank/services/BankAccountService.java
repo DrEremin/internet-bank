@@ -200,6 +200,9 @@ public class BankAccountService {
                 operationId);
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE,
+            rollbackFor = { UniquenessViolationException.class })
+
     public void createAccount(ClientIdDTO clientIdDTO)
             throws UniquenessViolationException {
 
@@ -214,6 +217,9 @@ public class BankAccountService {
         }
         bankAccountRepository.save(new BankAccount(clientIdDTO.getClientId()));
     }
+
+    @Transactional(isolation = Isolation.SERIALIZABLE,
+            rollbackFor = { DataMissingException.class })
 
     public void deleteAccount(ClientIdDTO clientIdDTO)
             throws DataMissingException {

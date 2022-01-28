@@ -3,11 +3,14 @@ package ru.dreremin.internetbank.repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.dreremin.internetbank.models.OperationDescription;
 
 import java.util.List;
 
 @SuppressWarnings("ALL")
+@Transactional(isolation = Isolation.SERIALIZABLE)
 @Repository
 public interface OperationDescriptionRepository extends
         JpaRepository<OperationDescription, Long> {

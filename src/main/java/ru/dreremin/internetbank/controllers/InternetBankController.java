@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.dreremin.internetbank.dto.BalanceDTO;
 import ru.dreremin.internetbank.dto.DateTimesOfPeriodWithZoneIdDTO;
+import ru.dreremin.internetbank.dto.OperationListDTO;
 import ru.dreremin.internetbank.dto.StatusOperationDTO;
 import ru.dreremin.internetbank.dto.impl.ClientIdDTO;
 import ru.dreremin.internetbank.dto.impl.SenderIdAndMoneyAndRecipientIdDTO;
@@ -85,15 +86,12 @@ public class InternetBankController {
     }
 
     @PostMapping(value="/get-operation-list", consumes="application/json")
-    public void getOperationList(
+    public OperationListDTO getOperationList(
             @RequestBody DateTimesOfPeriodWithZoneIdDTO
                     dateTimesOfPeriodWithZoneIdDTO)
             throws DateTimeOutOfBoundsException{
         dateTimesOfPeriodWithZoneIdDTO.validation();
-        List<OperationDescription> list = operationDescriptionService.getOperationList();
-        for (OperationDescription od : list) {
-            System.out.println(od);
-        }
+        return new OperationListDTO(operationDescriptionService.getOperationList());
     }
 
     @PutMapping(value="/create-account", consumes="application/json")

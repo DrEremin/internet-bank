@@ -3,6 +3,8 @@ package ru.dreremin.internetbank.services;
 import java.math.BigDecimal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.dreremin.internetbank.dto.BankAccountDTO;
 import ru.dreremin.internetbank.models.Operation;
 import ru.dreremin.internetbank.repositories.OperationRepository;
@@ -21,6 +23,7 @@ public class OperationService {
         return repository;
     }
 
+    /*@Transactional(isolation = Isolation.SERIALIZABLE)*/
     public long saveOperation(BankAccountDTO bankAccountDTO,
                               long bankAccountID,
                               int operationType,

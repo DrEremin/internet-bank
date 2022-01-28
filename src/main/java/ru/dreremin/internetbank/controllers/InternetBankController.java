@@ -1,15 +1,21 @@
 package ru.dreremin.internetbank.controllers;
 
 import java.math.BigDecimal;
+import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.dreremin.internetbank.dto.BalanceDTO;
+import ru.dreremin.internetbank.dto.DateTimesOfPeriodWithZoneIdDTO;
 import ru.dreremin.internetbank.dto.StatusOperationDTO;
 import ru.dreremin.internetbank.dto.impl.ClientIdDTO;
 import ru.dreremin.internetbank.dto.impl.SenderIdAndMoneyAndRecipientIdDTO;
 import ru.dreremin.internetbank.dto.impl.ClientIdAndMoneyDTO;
 import ru.dreremin.internetbank.exceptions.*;
+import ru.dreremin.internetbank.models.OperationDescription;
+import ru.dreremin.internetbank.repositories.OperationDescriptionRepository;
 import ru.dreremin.internetbank.services.BankAccountService;
+import ru.dreremin.internetbank.services.OperationDescriptionService;
 
 @Slf4j
 @RestController
@@ -17,9 +23,13 @@ import ru.dreremin.internetbank.services.BankAccountService;
 public class InternetBankController {
 
     private final BankAccountService bankAccountService;
+    private final OperationDescriptionService operationDescriptionService;
 
-    public InternetBankController(BankAccountService bankAccountService) {
+    public InternetBankController(
+            BankAccountService bankAccountService,
+            OperationDescriptionService operationDescriptionService) {
         this.bankAccountService = bankAccountService;
+        this.operationDescriptionService = operationDescriptionService;
     }
 
     @PostMapping(value="/get-balance", consumes="application/json")
@@ -30,7 +40,6 @@ public class InternetBankController {
         userIdDTO.validation();
         BigDecimal balance = bankAccountService.getBalance(userIdDTO);
         log.info("Get balance operation was completed successfully");
-
         return new BalanceDTO(balance, "Ok");
     }
 
@@ -73,6 +82,18 @@ public class InternetBankController {
         bankAccountService.transferMoney(senderIdAndMoneyAndRecipientIdDTO);
         log.info("Transfer of money operation was completed successfully");
         return new StatusOperationDTO(1, "Ok");
+    }
+
+    @PostMapping(value="/get-operation-list", consumes="application/json")
+    public void getOperationList(
+            @RequestBody DateTimesOfPeriodWithZoneIdDTO
+                    dateTimesOfPeriodWithZoneIdDTO)
+            throws DateTimeOutOfBoundsException{
+        dateTimesOfPeriodWithZoneIdDTO.validation();
+        List<OperationDescription> list = operationDescriptionService.getOperationList();
+        for (OperationDescription od : list) {
+            System.out.println(od);
+        }
     }
 
     @PutMapping(value="/create-account", consumes="application/json")

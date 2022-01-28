@@ -42,7 +42,7 @@ The database is currently represented by a single entity 'bank_account' with<br>
 three attributes: 'id' (primary key), 'user_id', 'current_balance'.<br>
 
 <table>
-    <thread>
+    <thead>
         <tr>
             <th colspan="4">Entity bank_account</th>
         </tr>
@@ -52,7 +52,7 @@ three attributes: 'id' (primary key), 'user_id', 'current_balance'.<br>
             <th>Constraints</th>
             <th>Default</th>
         </tr>
-    </thread>
+    </thead>
     <tbody>
     <tr>
         <td>id (primary key)</td>
@@ -77,4 +77,266 @@ three attributes: 'id' (primary key), 'user_id', 'current_balance'.<br>
 
 ### Logical data model
 ![diagram](screenshots/dlm.png)
+
+## Exceptions
+<table>
+  <thead>
+    <tr>
+      <th>№</th>
+      <th>Description</th>
+      <th>Return code</th>
+      <th>Exception</th>
+      <th>HTTP code</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td></td>
+      <td>Success in all methods</td>
+      <td align="center">1</td>
+      <td></td>
+      <td align="center">200</td>
+    </tr>
+    <tr>
+      <th colspan="5" align="left">BankAccountController.getBalance()</th>
+    </tr>
+    <tr>
+      <td align="center">1</td>
+      <td>Incorrect user id format</td>
+      <td align="center">-1</td>
+      <td>IncorrectNumberException</td>
+      <td align="center">400</td>
+    </tr>
+    <tr>
+      <td align="center">2</td>
+      <td>Incorrect date/time format</td>
+      <td align="center">-1</td>
+      <td>DateTimeParseException</td>
+      <td align="center">400</td>
+    </tr>
+    <tr>
+      <td align="center">3</td>
+      <td>Incorrect timezone format</td>
+      <td align="center">-1</td>
+      <td>DateTimeException</td>
+      <td align="center">400</td>
+    </tr>
+    <tr>
+      <td align="center">4</td>
+      <td>Time zone not found</td>
+      <td align="center">0</td>
+      <td>ZoneRulesException</td>
+      <td align="center">404</td>
+    </tr>
+    <tr>
+      <td align="center">5</td>
+      <td>User with this id not found</td>
+      <td align="center">0</td>
+      <td>DataMissingException</td>
+      <td align="center">404</td>
+    </tr>
+    <tr>
+      <th colspan="5" align="left">BankAccountController.takeMoney()</th>
+    </tr>
+    <tr>
+      <td align="center">1</td>
+      <td>Incorrect user ID format</td>
+      <td align="center">-1</td>
+      <td>IncorrectNumberException</td>
+      <td align="center">400</td>
+    </tr>
+    <tr>
+      <td align="center">2</td>
+      <td>Incorrect date/time format</td>
+      <td align="center">-1</td>
+      <td>DateTimeParseException</td>
+      <td align="center">400</td>
+    </tr>
+    <tr>
+      <td align="center">3</td>
+      <td>Incorrect timezone format</td>
+      <td align="center">-1</td>
+      <td>DateTimeException</td>
+      <td align="center">400</td>
+    </tr>
+    <tr>
+      <td align="center">4</td>
+      <td>Incorrect amount format</td>
+      <td align="center">-1</td>
+      <td>IncorrectNumberException</td>
+      <td align="center">400</td>
+    </tr>
+    <tr>
+      <td align="center">5</td>
+      <td>Time zone not found</td>
+      <td align="center">0</td>
+      <td>ZoneRulesException</td>
+      <td align="center">404</td>
+    </tr>
+    <tr>
+      <td align="center">6</td>
+      <td>User with this ID not found</td>
+      <td align="center">0</td>
+      <td>DataMissingException</td>
+      <td align="center">404</td>
+    </tr>
+    <tr>
+      <td align="center">7</td>
+      <td>Not enough funds on the account</td>
+      <td align="center">0</td>
+      <td>NotEnoughMoneyException</td>
+      <td align="center">422</td>
+    </tr>
+    <tr>
+      <th colspan="5" align="left">BankAccountController.putMoney()</th>
+    </tr>
+    <tr>
+      <td align="center">1</td>
+      <td>Incorrect user ID format</td>
+      <td align="center">-1</td>
+      <td>IncorrectNumberException</td>
+      <td align="center">400</td>
+    </tr>
+    <tr>
+      <td align="center">2</td>
+      <td>Incorrect date/time format</td>
+      <td align="center">-1</td>
+      <td>DateTimeParseException</td>
+      <td align="center">400</td>
+    </tr>
+    <tr>
+      <td align="center">3</td>
+      <td>Incorrect timezone format</td>
+      <td align="center">-1</td>
+      <td>DateTimeException</td>
+      <td align="center">400</td>
+    </tr>
+    <tr>
+      <td align="center">4</td>
+      <td>Incorrect amount format</td>
+      <td align="center">-1</td>
+      <td>IncorrectNumberException</td>
+      <td align="center">400</td>
+    </tr>
+    <tr>
+      <td align="center">5</td>
+      <td>Time zone not found</td>
+      <td align="center">0</td>
+      <td>ZoneRulesException</td>
+      <td align="center">404</td>
+    </tr>
+    <tr>
+      <td align="center">6</td>
+      <td>User with this ID not found</td>
+      <td align="center">0</td>
+      <td>DataMissingException</td>
+      <td align="center">404</td>
+    </tr>
+    <tr>
+      <th colspan="5" align="left">BankAccountController.transferMoney()</th>
+    </tr>
+    <tr>
+      <td align="center">1</td>
+      <td>Invalid sender ID format</td>
+      <td align="center">-1</td>
+      <td>IncorrectNumberException</td>
+      <td align="center">400</td>
+    </tr>
+    <tr>
+      <td align="center">2</td>
+      <td>Invalid recipient ID format</td>
+      <td align="center">-1</td>
+      <td>IncorrectNumberException</td>
+      <td align="center">400</td>
+    </tr>
+    <tr>
+      <td align="center">3</td>
+      <td>Incorrect date/time format</td>
+      <td align="center">-1</td>
+      <td>DateTimeParseException</td>
+      <td align="center">400</td>
+    </tr>
+    <tr>
+      <td align="center">4</td>
+      <td>Incorrect timezone format</td>
+      <td align="center">-1</td>
+      <td>DateTimeException</td>
+      <td align="center">400</td>
+    </tr>
+    <tr>
+      <td align="center">5</td>
+      <td>Incorrect amount format</td>
+      <td align="center">-1</td>
+      <td>IncorrectNumberException</td>
+      <td align="center">400</td>
+    </tr>
+    <tr>
+      <td align="center">6</td>
+      <td>Time zone not found</td>
+      <td align="center">0</td>
+      <td>ZoneRulesException</td>
+      <td align="center">404</td>
+    </tr>
+    <tr>
+      <td align="center">7</td>
+      <td>Sender with this ID not found</td>
+      <td align="center">0</td>
+      <td>DataMissingException</td>
+      <td align="center">404</td>
+    </tr>
+    <tr>
+      <td align="center">8</td>
+      <td>Recipient with this ID not found</td>
+      <td align="center">0</td>
+      <td>DataMissingException</td>
+      <td align="center">404</td>
+    </tr>
+    <tr>
+      <td align="center">9</td>
+      <td>The sender's ID is equal to the recipient's ID</td>
+      <td align="center">0</td>
+      <td>SameIdException</td>
+      <td align="center">422</td>
+    </tr>
+    <tr>
+      <td align="center">10</td>
+      <td>Insufficient funds in sender's account</td>
+      <td align="center">0</td>
+      <td>NotEnoughMoneyException</td>
+      <td align="center">422</td>
+    </tr>
+    <tr>
+      <th colspan="5" align="left">BankAccountController.getOperationList()</th>
+    </tr>
+    <tr>
+      <td align="center">1</td>
+      <td>Incorrect date/time format</td>
+      <td align="center">-1</td>
+      <td>DateTimeParseException</td>
+      <td align="center">400</td>
+    </tr>
+    <tr>
+      <td align="center">2</td>
+      <td>Incorrect timezone format</td>
+      <td align="center">-1</td>
+      <td>DateTimeException</td>
+      <td align="center">400</td>
+    </tr>
+    <tr>
+      <td align="center">3</td>
+      <td>Time zone not found</td>
+      <td align="center">0</td>
+      <td>ZoneRulesException</td>
+      <td align="center">404</td>
+    </tr>
+    <tr>
+      <td align="center">4</td>
+      <td>Start point of time greater or equal than to end</td>
+      <td align="center">0</td>
+      <td>DateTimeOutOfBoundsException</td>
+      <td align="center">422</td>
+    </tr>
+    
+  </tbody>
+</table>
 

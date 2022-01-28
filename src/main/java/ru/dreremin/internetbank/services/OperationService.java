@@ -11,14 +11,14 @@ import ru.dreremin.internetbank.repositories.OperationRepository;
 @Service
 public class OperationService {
 
-    private final OperationRepository operationRepository;
+    private final OperationRepository repository;
 
     public OperationService(OperationRepository operationRepository) {
-        this.operationRepository = operationRepository;
+        this.repository = operationRepository;
     }
 
     public OperationRepository getOperationRepository() {
-        return operationRepository;
+        return repository;
     }
 
     public long saveOperation(BankAccountDTO bankAccountDTO,
@@ -36,7 +36,7 @@ public class OperationService {
                 bankAccountDTO.getLocalTime(),
                 bankAccountDTO.getZoneId());
 
-        operationRepository.save(operation);
+        repository.save(operation);
         return operation.getId();
     }
 }

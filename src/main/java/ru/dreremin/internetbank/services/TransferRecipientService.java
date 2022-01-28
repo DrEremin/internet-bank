@@ -10,22 +10,22 @@ import ru.dreremin.internetbank.repositories.TransferRecipientRepository;
 @Service
 public class TransferRecipientService {
 
-    private final TransferRecipientRepository transferRecipientRepository;
+    private final TransferRecipientRepository repository;
 
     public TransferRecipientService(
             TransferRecipientRepository transferRecipientRepository) {
-        this.transferRecipientRepository = transferRecipientRepository;
+        this.repository = transferRecipientRepository;
     }
 
     public TransferRecipientRepository getTransferRecipientRepository() {
 
-        return transferRecipientRepository;
+        return repository;
     }
 
-    public void saveTransferRecipient(long accountOfRecipientId, long operationId) {
+    public void saveTransferRecipient(long accountRecipientId, long operationId) {
 
         TransferRecipient transferRecipient = new TransferRecipient(
-                new TransferRecipientPkey(accountOfRecipientId, operationId));
-        transferRecipientRepository.save(transferRecipient);
+                new TransferRecipientPkey(accountRecipientId, operationId));
+        repository.save(transferRecipient);
     }
 }

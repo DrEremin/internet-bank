@@ -77,49 +77,13 @@ public class ExceptionsController {
                 new StatusOperationDTO(0, e.getMessage()),
                 HttpStatus.UNPROCESSABLE_ENTITY);
     }
-}
 
-/*
-* getBalance():
-*   1. Некорректный формат Id пользователя       (-1)    IncorrectNumberException  400
-*   2. Некорректный формат даты|времени          (-1)      DateTimeParseException  400
-*   3. Некорректный формат временной зоны        (-1)           DateTimeException  400
-*   4. Временная зона не найдена                 ( 0)          ZoneRulesException  404
-*   5. Нет пользователя с таким Id               ( 0)        DataMissingException  404
-*      Успех:                                    ( 1)                              200
-* ====================================================================================
-* takeMoney():
-*   1. Некорректный формат Id пользователя       (-1)    IncorrectNumberException  400
-*   2. Некорректный формат суммы                 (-1)    IncorrectNumberException  400
-*   3. Некорректный формат даты|времени          (-1)      DateTimeParseException  400
-*   4. Некорректный формат временной зоны        (-1)           DateTimeException  400
-*   5. Временная зона не найдена                 ( 0)          ZoneRulesException  404
-*   6. Нет пользователя с таким Id               ( 0)        DataMissingException  404
-*   7. Недостаточно средств на счете             ( 0)     NotEnoughMoneyException  422
-*      Успех:                                    ( 1)                              200
-* ====================================================================================
-* putMoney():
-*   1. Некорректный формат Id пользователя       (-1)    IncorrectNumberException  400
-*   2. Некорректный формат суммы                 (-1)    IncorrectNumberException  400
-*   3. Некорректный формат даты|времени          (-1)      DateTimeParseException  400
-*   4. Некорректный формат временной зоны        (-1)           DateTimeException  400
-*   5. Временная зона не найдена                 ( 0)          ZoneRulesException  404
-*   6. Нет пользователя с таким Id               ( 0)        DataMissingException  404
-*      Успех:                                    ( 1)                              200
-* ====================================================================================
-* transferMoney():
-*   1. Некорректный формат Id отправителя        (-1)    IncorrectNumberException  400
-*   2. Некорректный формат Id получателя         (-1)    IncorrectNumberException  400
-*   3. Некорректный формат суммы                 (-1)    IncorrectNumberException  400
-*   4. Некорректный формат даты|времени          (-1)      DateTimeParseException  400
-*   5. Некорректный формат временной зоны        (-1)           DateTimeException  400
-*   6. Временная зона не найдена                 ( 0)          ZoneRulesException  404
-*   7. Нет отправителя с таким Id                ( 0)        DataMissingException  404
-*   8. Нет получателя с таким Id                 ( 0)        DataMissingException  404
-*   9. Id отправителя равно id получателя        ( 0)             SameIdException  422
-*  10. Недостаточно средств на счете отправителя ( 0)     NotEnoughMoneyException  422
-*      Успех:                                    ( 1)                              200
-* ====================================================================================
-* operationList():
-* */
+    @ExceptionHandler(DateTimeOutOfBoundsException.class)
+    public ResponseEntity<StatusOperationDTO> handleDateTimeOutOfBoundsException(
+            DateTimeOutOfBoundsException e) {
+        return new ResponseEntity<>(
+                new StatusOperationDTO(0, e.getMessage()),
+                HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+}
 

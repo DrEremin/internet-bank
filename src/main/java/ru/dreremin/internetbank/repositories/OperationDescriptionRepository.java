@@ -1,30 +1,51 @@
 package ru.dreremin.internetbank.repositories;
 
+import java.time.ZonedDateTime;
+import java.util.List;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.dreremin.internetbank.models.OperationDescription;
 
-import java.util.List;
-
-@SuppressWarnings("ALL")
 @Transactional(isolation = Isolation.SERIALIZABLE)
 @Repository
 public interface OperationDescriptionRepository extends
         JpaRepository<OperationDescription, Long> {
 
-    @Query(value = "select operation.id" +
-            ", date_time" +
-            ", operation_name" +
-            ", transaction_amount" +
-            ", operation.account_id" +
-            ", recipient_account_id " +
-            "from operation " +
-            "left join transfer_recipient " +
-            "on operation.id = transfer_recipient.operation_id " +
-            "left join operation_type " +
-            "on operation_type_id = operation_type.id", nativeQuery = true)
-    List<OperationDescription> getAll();
+    @Query("select new OperationDescription(" +
+            "o.id," +
+            "o.timeAndDateOfOperation, " +
+            "ot.operationName, " +
+            "o.amountOfOperation, " +
+            "o.accountId," +
+            "tr.id.recipientAccountId) " +
+            "from Operation o " +
+            "   join OperationType ot " +
+            "       on o.operationTypeId = ot.id " +
+            "   left join TransferRecipient tr " +
+            "       on o.id = tr.id.operationId")
+    List<OperationDescription> getAll(Sort sort);
+
+    @Query("select new OperationDescription(" +
+            "o.id," +
+            "o.timeAndDateOfOperation, " +
+            "ot.operationName, " +
+            "o.amountOfOperation, " +
+            "o.accountId," +
+            "tr.id.recipientAccountId) " +
+            "from Operation o " +
+            "   join OperationType ot " +
+            "       on o.operationTypeId = ot.id " +
+            "   left join TransferRecipient tr " +
+            "       on o.id = tr.id.operationId " +
+            "where o.timeAndDateOfOperation >= :start " +
+            "   and o.timeAndDateOfOperation <= :end")
+    List<OperationDescription> getAllWithinRange(
+            @Param("start") ZonedDateTime startTimePoint,
+            @Param("end")ZonedDateTime endTimePoint,
+            Sort sort);
 }

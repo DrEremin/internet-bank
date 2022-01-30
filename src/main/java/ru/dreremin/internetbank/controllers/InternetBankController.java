@@ -88,10 +88,12 @@ public class InternetBankController {
     @PostMapping(value="/get-operation-list", consumes="application/json")
     public OperationListDTO getOperationList(
             @RequestBody DateTimesOfPeriodWithZoneIdDTO
-                    dateTimesOfPeriodWithZoneIdDTO)
+                    dto)
             throws DateTimeOutOfBoundsException{
-        dateTimesOfPeriodWithZoneIdDTO.validation();
-        return new OperationListDTO(operationDescriptionService.getOperationList());
+        dto.validation();
+        log.info("Getting a list of operations was completed successfully");
+        return new OperationListDTO(
+                operationDescriptionService.getOperationList(dto));
     }
 
     @PutMapping(value="/create-account", consumes="application/json")

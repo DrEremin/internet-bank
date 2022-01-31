@@ -10,9 +10,7 @@ public class InternetBankApplication {
 
     public static void main(String[] args) {
 
-        log.info("Application started");
         SpringApplication.run(InternetBankApplication.class, args);
-        log.info("Application finished");
     }
 
 }

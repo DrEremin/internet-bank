@@ -14,8 +14,7 @@ import ru.dreremin.internetbank.exceptions.SameIdException;
 @JsonIgnoreProperties(
         { "isRealInputNumber", "isRealInputNumberOfRecipientId" })
 public class SenderIdAndMoneyAndRecipientIdDTO
-        extends BankAccountDTO
-        implements Serializable {
+        extends BankAccountDTO implements Serializable {
 
     private final long recipientId;
     private final BigDecimal money;
@@ -37,36 +36,28 @@ public class SenderIdAndMoneyAndRecipientIdDTO
     }
 
     @Override
-    public void validation() throws
-            IncorrectNumberException,
-            SameIdException {
+    public void validation() throws IncorrectNumberException, SameIdException {
 
         try {
-
             if (this.isRealInputNumber
                     || this.isRealInputNumberOfRecipientId) {
-
                 throw new IncorrectNumberException(
                         "Value of user id or recipient " +
                                 "id must not be real number");
             }
-
             if (clientId <= 0 || recipientId <= 0) {
                 throw new IncorrectNumberException(
                         "Value of user id or recipient " +
                                 "id must not be less than 1");
             }
-
             if (money.compareTo(BigDecimal.valueOf(0.01)) < 0) {
                 throw new IncorrectNumberException(
                         "Value of money must not be less than 0.01");
             }
-
             if (clientId == recipientId) {
                 throw new SameIdException(
                         "The sender's id is equal to the recipient's id");
             }
-
         } catch (IncorrectNumberException | SameIdException e) {
             log.error(e.toString());
             throw e;

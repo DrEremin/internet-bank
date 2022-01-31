@@ -19,9 +19,9 @@ public abstract class BankAccountDTO {
     protected final ZoneId zoneId;
 
     public BankAccountDTO (double clientId,
-                      String localDate,
-                      String localTime,
-                      String zoneId) {
+                           String localDate,
+                           String localTime,
+                           String zoneId) {
 
         this.clientId = (long) clientId;
         isRealInputNumber = (this.clientId - clientId) != 0;
@@ -30,13 +30,12 @@ public abstract class BankAccountDTO {
         this.zoneId = ZoneId.of(zoneId);
     }
 
-    abstract public void validation() throws
-            IncorrectNumberException,
-            SameIdException;
+    abstract public void validation()
+            throws IncorrectNumberException, SameIdException;
 
     public long getClientId() { return clientId; }
 
-    public boolean isRealInputNumber() { return isRealInputNumber; }
+    public boolean getIsRealNumber() { return isRealInputNumber; }
 
     public LocalDate getLocalDate() { return localDate; }
 

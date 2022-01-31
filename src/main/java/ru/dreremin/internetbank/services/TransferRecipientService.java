@@ -16,6 +16,7 @@ public class TransferRecipientService {
 
     public TransferRecipientService(
             TransferRecipientRepository transferRecipientRepository) {
+
         this.repository = transferRecipientRepository;
     }
 

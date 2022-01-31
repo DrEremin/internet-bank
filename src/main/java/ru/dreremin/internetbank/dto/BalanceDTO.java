@@ -9,6 +9,7 @@ public class BalanceDTO implements Serializable {
     private final String status;
 
     public BalanceDTO(BigDecimal balance, String status) {
+
         this.balance = balance;
         this.status = status;
     }

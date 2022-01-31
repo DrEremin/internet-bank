@@ -8,7 +8,7 @@ import ru.dreremin.internetbank.dto.BankAccountDTO;
 import ru.dreremin.internetbank.exceptions.IncorrectNumberException;
 
 @Slf4j
-@JsonIgnoreProperties({"isRealInputNumber"})
+@JsonIgnoreProperties({ "isRealInputNumber" })
 public class ClientIdDTO extends BankAccountDTO implements Serializable {
 
     @JsonCreator

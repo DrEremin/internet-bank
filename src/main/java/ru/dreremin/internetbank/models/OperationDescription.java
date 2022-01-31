@@ -86,8 +86,8 @@ public class OperationDescription {
         return String.format("DATE/TIME/ZONE: %-40s " +
                         " OPERATION TYPE: %-30s " +
                         " AMOUNT: %15s " +
-                        " SENDER'S ACCOUNT ID: %-10d " +
-                        " RECIPIENT'S ACCOUNT ID: %-10d",
+                        " SENDER'S ACCOUNT ID: %-23d " +
+                        " RECIPIENT'S ACCOUNT ID: %-23d",
                 dateTime.toString(),
                 operationName,
                 transactionAmount.toString(),

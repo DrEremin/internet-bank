@@ -1,9 +1,8 @@
 package ru.dreremin.internetbank.dto;
 
-import ru.dreremin.internetbank.models.OperationDescription;
-
 import java.io.Serializable;
 import java.util.List;
+import ru.dreremin.internetbank.models.OperationDescription;
 
 public class OperationListDTO implements Serializable {
 

@@ -1,4 +1,4 @@
-# Internet-bank
+# Internet-bank application
 <br>
 <hr>
 
@@ -9,8 +9,8 @@ Its current capabilities allow a remote user to conduct the following<br>
 operations with a bank account: creation, deletion, receipt balance,<br>
 withdrawal of money, replenishment.<br>
 To interact with a remote user, the application implements REST API. Data<br>
-xchange takes place in .JSON format.<br>
-All account information is stored in a database managed by the Postgresql DBMS.<br>
+exchange takes place in .JSON format.<br>
+All account information is stored in a database managed by the PostgreSQL DBMS.<br>
 In case of conflict situations in the application, they are processed using<br>
 the exception mechanism. The result of exception handling allows you to issue<br> 
 to the remote user exhaustive answers.<br>
@@ -22,29 +22,72 @@ internet-bank/src/main/resources/logs.<br><br>
 ## Structural elements
 
 * REST API implemented in a class<br>
-  ru.dreremin.internetbank.controllers.InternetBankController;
-* The service layer is represented by the class<br>
-  ru.dreremin.internetbank.services.BankAccountService;
-* The model is represented by the BankAccount class.<br>
-  Interaction with the database occurs through interface implementations<br>
-  ru.dreaming.internetbank.repositories.BankAccountRepository,<br>
-  inherited from CrudRepository<T, ID> and with the participation of the model;<br>
-* To handle conflict situations, own exception classes (inheriting from<br>
-  Exception) are implemented. They are in the package<br> 
-  ru.dreremin.internetbank.exceptions. To manage exceptions was provided the<br>
-  class ru.dreremin.internetbank.controllers.ExceptionController;
-* To receive and transmit data in .JSON format, was implemented classes located<br> 
-  in the package ru.dreremin.internetbank.dto.<br><br>
+  ru.dreremin.internetbank.controllers.InternetBankController;<br>
+* The service layer is represented by the package<br> 
+  ru.dreremin.internetbank.services with classes:<br>
+  BankAccountService, OperationService, OperationDescriptionService,<br> 
+  TransferRecepientService;<br>
+* Models that display database entities are contained in the package<br> 
+  ru.dreremin.internetbank.models. They represented by classes: BankAccount,<br>
+  Operation, OperationType, TransferRecipient. Class-model OperationDescription<br> 
+  don't is mapping any a table from database. This is a model of a string<br>
+  transmitted to the client with information about the operation with the<br>
+  account;<br>
+* In package ru.dreremin.internetbank.repositories placed interfaces inherited<br>
+  from JpaRepository<T,ID>: BankAccountRepository,<br> 
+  OperationDescriptionRepository, OperationRepository,<br>
+  TransferRecipientRepository. They are necessary for direct interaction with<br>
+  the database through the mechanism Spring Data JPA;<br>
+* In package ru.dreremin.internetbank.exceptions placed custom exception<br>
+  classes: DataMissingException, DateTimeOutOfBoundsException,<br>
+  IncorrectNumberException, NotEnoughMoneyException, SameIdException,<br>
+  UniquenessViolationException. They are necessary for handle especial<br>
+  conflict situations and representation full information to client.<br>
+  To manage exceptions was provided the class<br>
+  ru.dreremin.internetbank.controllers.ExceptionController;<br>
+* To receive and transmit data in .JSON format, was implemented classes located<br>
+  in the package ru.dreremin.internetbank.dto: StatusOperationDTO,<br>
+  OperationListDTO, DateTimeOfPeriodWithZoneIdDto, BankAccountDTO,<br>
+  BalanceDTO, SenderIdAndMoneyAndRecipientIdDTO, ClientIdDTO,<br>
+  ClientIdAndMoneyDTO.<br><br>
+<hr>
+
+## App interaction points
+
+App interaction points represented methods of class BankAccountController:<br>
+* getBalance() - accepts the client's ID, returns the amount on the account of<br>
+  this client;<br>
+* putMoney() - accepts the client's ID and amount, adds specified value of<br> 
+  amount to amount on account of client with specified ID;<br>
+* takeMoney() - accepts the client's ID and amount, substracts specified value<br>
+  of amount to amount on account of client with specified ID;<br>
+* transferMoney() - accepts the sender's ID, recipient's ID and amount,<br>
+  substracts specified value of amount to amount on account of sender<br>
+  with specified ID, then adds specified value of amount to amount on<br>
+  account of recipient with specified ID;<br>
+* getOperationList() - accepts two dates and a time zone, returns the operation<br>
+  list in the specified dates range. If one or both dates are null then returns<br>
+  a list of all operations;<br>
+* createAccount() - accepts the client's ID, created the a new account with the<br>
+  specified client's ID and an amount equal 0.0;<br>
+* deleteAccount() - accepts the client's ID, deleted the an account with the<br>
+  specified client's ID.<br>
+
+The getBalance(), putMoney(), takeMoney and transferMoney() methods also<br>
+receive the date, time and time zone without fail. This data is required<br>
+because all of these methods create a new entry in the database table each<br>
+time they succeed.<br>
+
 <hr>
 
 ## Database
-The database is currently represented by a single entity 'bank_account' with<br> 
-three attributes: 'id' (primary key), 'user_id', 'current_balance'.<br>
+DBMS - PostgreSQL<br>
+Сurrently the database is represented by the following tables:<br>
 
 <table>
     <thead>
         <tr>
-            <th colspan="4">Entity bank_account</th>
+            <th colspan="4">bank_account</th>
         </tr>
         <tr>
             <th>Attribute</th>
@@ -55,22 +98,360 @@ three attributes: 'id' (primary key), 'user_id', 'current_balance'.<br>
     </thead>
     <tbody>
     <tr>
-        <td>id (primary key)</td>
+        <td>id</td>
         <td>bigserial</td>
-        <td></td>
+        <td>not null, primary key, unique</td>
         <td></td>
     </tr>
     <tr>
-        <td>user_id</td>
+        <td>client_id</td>
         <td>bigint</td>
-        <td>not null, user_id > 0, unique</td>
+        <td>not null, client_id > 0, unique</td>
         <td></td>
     </tr>
     <tr>
         <td>current_balance</td>
         <td>numeric(20.2)</td>
-        <td>not null, current_balance > 0</td>
+        <td>not null, current_balance >= 0</td>
         <td>0.00</td>
+    </tr>
+    <tr>
+      <th colspan="4"></th>
+    </tr>
+    </tbody>
+    <thead>
+        <tr>
+            <th colspan="4">operation</th>
+        </tr>
+        <tr>
+            <th>Attribute</th>
+            <th>Data type</th>
+            <th>Constraints</th>
+            <th>Default</th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>id</td>
+        <td>bigserial</td>
+        <td>not null, primary key, unique</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>account_id</td>
+        <td>bigint</td>
+        <td>not null, account_id > 0, foreign key</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>operation_type_id</td>
+        <td>integer</td>
+        <td>not null, operation_type_id > 0, foreign key</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>date_time</td>
+        <td>timestamptz</td>
+        <td>not null</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>transaction_amount</td>
+        <td>numeric(20,2)</td>
+        <td>not null, transaction_amount >= 0</td>
+        <td>0.0</td>
+    </tr>
+    </tbody>
+    <tr>
+      <th colspan="4"></th>
+    </tr>
+    <thead>
+        <tr>
+            <th colspan="4">operation_type</th>
+        </tr>
+        <tr>
+            <th>Attribute</th>
+            <th>Data type</th>
+            <th>Constraints</th>
+            <th>Default</th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>id</td>
+        <td>serial</td>
+        <td>not null, primary key, unique</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>operation_name</td>
+        <td>varchar(100)</td>
+        <td>not null</td>
+        <td></td>
+    </tr>
+    </tbody>
+    <tr>
+      <th colspan="4"></th>
+    </tr>
+    <thead>
+        <tr>
+            <th colspan="4">transfer_recipient</th>
+        </tr>
+        <tr>
+            <th>Attribute</th>
+            <th>Data type</th>
+            <th>Constraints</th>
+            <th>Default</th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>recipient_account_id</td>
+        <td>bigint</td>
+        <td>not null, recipient_account_id > 0, foreign key</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>operation_id</td>
+        <td>bigint</td>
+        <td>not null, recipient_account_id > 0, foreign key</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td>unique(recipient_account_id, operation_id)</td>
+        <td></td>
+    </tr>
+    </tbody>
+    <tr>
+      <th colspan="4"></th>
+    </tr>
+    <thead>
+        <tr>
+            <th colspan="4">client</th>
+        </tr>
+        <tr>
+            <th>Attribute</th>
+            <th>Data type</th>
+            <th>Constraints</th>
+            <th>Default</th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>id</td>
+        <td>bigserial</td>
+        <td>not null, primary key, unique</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>firstname</td>
+        <td>text</td>
+        <td>not null, must contain only letters</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>lastname</td>
+        <td>text</td>
+        <td>not null, must contain only letters</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>patronymic</td>
+        <td>text</td>
+        <td>not null, must contain only letters</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>birthday</td>
+        <td>date</td>
+        <td>not null</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>address</td>
+        <td>text</td>
+        <td>not null</td>
+        <td></td>
+    </tr>
+    </tbody>
+    <tr>
+      <th colspan="4"></th>
+    </tr>
+    <thead>
+        <tr>
+            <th colspan="4">email</th>
+        </tr>
+        <tr>
+            <th>Attribute</th>
+            <th>Data type</th>
+            <th>Constraints</th>
+            <th>Default</th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>id</td>
+        <td>bigserial</td>
+        <td>not null, primary key, unique</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>email_address</td>
+        <td>text</td>
+        <td>not null, ssss@ssss.lll, unique</td>
+        <td></td>
+    </tr>
+    </tbody>
+    <tr>
+      <th colspan="4"></th>
+    </tr>
+    <thead>
+        <tr>
+            <th colspan="4">email_client</th>
+        </tr>
+        <tr>
+            <th>Attribute</th>
+            <th>Data type</th>
+            <th>Constraints</th>
+            <th>Default</th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>email_id</td>
+        <td>bigint</td>
+        <td>not null, foreign key, unique</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>client_id</td>
+        <td>bigint</td>
+        <td>not null, foreign key</td>
+        <td></td>
+    </tr>
+    </tbody>
+    <tr>
+      <th colspan="4"></th>
+    </tr>
+    <thead>
+        <tr>
+            <th colspan="4">phone</th>
+        </tr>
+        <tr>
+            <th>Attribute</th>
+            <th>Data type</th>
+            <th>Constraints</th>
+            <th>Default</th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>id</td>
+        <td>bigserial</td>
+        <td>not null, primary key, unique</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>phone_number</td>
+        <td>varchar(16)</td>
+        <td>not null, +7(ddd)ddd-dd-dd, unique</td>
+        <td></td>
+    </tr>
+    </tbody>
+    <tr>
+      <th colspan="4"></th>
+    </tr>
+    <thead>
+        <tr>
+            <th colspan="4">phone_client</th>
+        </tr>
+        <tr>
+            <th>Attribute</th>
+            <th>Data type</th>
+            <th>Constraints</th>
+            <th>Default</th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>phone_id</td>
+        <td>bigint</td>
+        <td>not null, foreign key, unique</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>client_id</td>
+        <td>bigint</td>
+        <td>not null, foreign key</td>
+        <td></td>
+    </tr>
+    </tbody>
+    </tr>
+    </tbody>
+    <tr>
+      <th colspan="4"></th>
+    </tr>
+    <thead>
+        <tr>
+            <th colspan="4">passport</th>
+        </tr>
+        <tr>
+            <th>Attribute</th>
+            <th>Data type</th>
+            <th>Constraints</th>
+            <th>Default</th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>id</td>
+        <td>bigserial</td>
+        <td>not null, primary key, unique</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>client_id</td>
+        <td>bigint</td>
+        <td>not null, foreign key, unique</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>series</td>
+        <td>varchar(4)</td>
+        <td>not null, dddd</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>passport_number</td>
+        <td>varchar(6)</td>
+        <td>not null, dddddd</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>date_issue</td>
+        <td>date</td>
+        <td>not null</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>whom_issued_by</td>
+        <td>text</td>
+        <td>not null</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>code_division</td>
+        <td>varchar(7)</td>
+        <td>not null, ddd-ddd</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td>unique(series, passport_number)</td>
+        <td></td>
     </tr>
     </tbody>
 </table>
@@ -336,7 +717,6 @@ three attributes: 'id' (primary key), 'user_id', 'current_balance'.<br>
       <td>DateTimeOutOfBoundsException</td>
       <td align="center">422</td>
     </tr>
-    
   </tbody>
 </table>
 

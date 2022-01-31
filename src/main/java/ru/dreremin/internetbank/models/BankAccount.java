@@ -22,38 +22,39 @@ public class BankAccount {
 
     public BankAccount () {}
 
-    public BankAccount (long user_id) {
-        this.clientId = user_id;
+    public BankAccount (long clientId) {
+
+        this.clientId = clientId;
         currentBalance = BigDecimal.valueOf(0.0);
     }
 
     public void setId(long id) { this.id = id; }
 
-    public void setUserId(long userId) {
-        this.clientId = userId;
-    }
     public void setCurrentBalance(BigDecimal currentBalance) {
+
         this.currentBalance = currentBalance.setScale(2, RoundingMode.DOWN);
     }
 
     public long getId() { return id; }
 
-    public long getUserId() { return clientId; }
+    public long getClientId() { return clientId; }
 
     public BigDecimal getCurrentBalance() { return currentBalance; }
 
     @Override
     public boolean equals(Object o) {
+
         if (this == o) return true;
         if (!(o instanceof BankAccount)) return false;
         BankAccount that = (BankAccount) o;
-        return getId() == that.getId() && getUserId() == that.getUserId()
-                && Objects.equals(getCurrentBalance(),
-                that.getCurrentBalance());
+        return getId() == that.getId()
+                && getClientId() == that.getClientId()
+                && getCurrentBalance().equals(that.getCurrentBalance());
     }
 
     @Override
     public int hashCode() {
+
         return Objects.hash(getId());
     }
 }

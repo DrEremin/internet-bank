@@ -22,7 +22,9 @@ import ru.dreremin.internetbank.repositories.BankAccountRepository;
 public class BankAccountService {
 
     private final BankAccountRepository bankAccountRepository;
+
     private final OperationService operationService;
+
     private final TransferRecipientService transferRecipientService;
 
     public BankAccountService(
@@ -53,7 +55,6 @@ public class BankAccountService {
     @Transactional(
             isolation = Isolation.SERIALIZABLE,
             rollbackFor = DataMissingException.class)
-
     public BigDecimal getBalance(ClientIdDTO clientIdDTO) throws
             DataMissingException {
 
@@ -79,7 +80,6 @@ public class BankAccountService {
     @Transactional(
             isolation = Isolation.SERIALIZABLE,
             rollbackFor = DataMissingException.class)
-
     public void putMoney(ClientIdAndMoneyDTO userIdAndMoneyDTO) throws
             DataMissingException {
 
@@ -107,9 +107,8 @@ public class BankAccountService {
     @Transactional(isolation =
             Isolation.SERIALIZABLE, rollbackFor =
             { DataMissingException.class, NotEnoughMoneyException.class })
-
-    public void takeMoney(ClientIdAndMoneyDTO userIdAndMoneyDTO) throws
-            DataMissingException, NotEnoughMoneyException {
+    public void takeMoney(ClientIdAndMoneyDTO userIdAndMoneyDTO)
+            throws DataMissingException, NotEnoughMoneyException {
 
         Optional<BankAccount> optionalBankAccount =
                 bankAccountRepository.getBankAccountByClientId(
@@ -159,7 +158,6 @@ public class BankAccountService {
     @Transactional(isolation =
             Isolation.SERIALIZABLE, rollbackFor =
             { DataMissingException.class, NotEnoughMoneyException.class })
-
     public void transferMoney(
             SenderIdAndMoneyAndRecipientIdDTO senderIdAndMoneyAndRecipientIdDTO)
             throws DataMissingException, NotEnoughMoneyException {
@@ -202,7 +200,6 @@ public class BankAccountService {
 
     @Transactional(isolation = Isolation.SERIALIZABLE,
             rollbackFor = { UniquenessViolationException.class })
-
     public void createAccount(ClientIdDTO clientIdDTO)
             throws UniquenessViolationException {
 
@@ -220,7 +217,6 @@ public class BankAccountService {
 
     @Transactional(isolation = Isolation.SERIALIZABLE,
             rollbackFor = { DataMissingException.class })
-
     public void deleteAccount(ClientIdDTO clientIdDTO)
             throws DataMissingException {
 

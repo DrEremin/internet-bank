@@ -17,6 +17,7 @@ public class TransferRecipientPkey implements Serializable {
     public TransferRecipientPkey() {}
 
     public TransferRecipientPkey(long recipientAccountId, long operationId) {
+
         this.recipientAccountId = recipientAccountId;
         this.operationId = operationId;
     }
@@ -27,6 +28,7 @@ public class TransferRecipientPkey implements Serializable {
 
     @Override
     public boolean equals(Object o) {
+
         if (this == o) return true;
         if (!(o instanceof TransferRecipientPkey)) return false;
         TransferRecipientPkey that = (TransferRecipientPkey) o;
@@ -36,7 +38,6 @@ public class TransferRecipientPkey implements Serializable {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(getRecipientAccountId(), getOperationId());
     }
 }

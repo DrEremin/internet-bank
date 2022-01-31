@@ -1,17 +1,12 @@
 package ru.dreremin.internetbank.models;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-
-import javax.persistence.*;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Objects;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "operation")

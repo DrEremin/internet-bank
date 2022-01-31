@@ -10,10 +10,9 @@ import ru.dreremin.internetbank.dto.BankAccountDTO;
 import ru.dreremin.internetbank.exceptions.IncorrectNumberException;
 
 @Slf4j
-@JsonIgnoreProperties({"isRealInputNumber"})
+@JsonIgnoreProperties({ "isRealInputNumber" })
 public class ClientIdAndMoneyDTO
-        extends BankAccountDTO
-        implements Serializable {
+        extends BankAccountDTO implements Serializable {
 
     private final BigDecimal money;
 

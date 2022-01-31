@@ -23,7 +23,7 @@ public class OperationService {
         return repository;
     }
 
-    /*@Transactional(isolation = Isolation.SERIALIZABLE)*/
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public long saveOperation(BankAccountDTO bankAccountDTO,
                               long bankAccountID,
                               int operationType,

@@ -27,14 +27,18 @@ public class BankAccountService {
 
     private final TransferRecipientService transferRecipientService;
 
+    private final ClientService clientService;
+
     public BankAccountService(
             BankAccountRepository bankAccountRepository,
             OperationService operationService,
-            TransferRecipientService transferRecipientService) {
+            TransferRecipientService transferRecipientService,
+            ClientService clientService) {
 
         this.bankAccountRepository = bankAccountRepository;
         this.operationService = operationService;
         this.transferRecipientService = transferRecipientService;
+        this.clientService = clientService;
     }
 
     public BankAccountRepository getBankAccountRepository() {
@@ -62,7 +66,7 @@ public class BankAccountService {
                 .getBankAccountByClientId(clientIdDTO.getClientId());
 
         if (optionalBankAccount.isEmpty()) {
-            String message = "User with this id does not exist";
+            String message = "Client with this id does not exist";
             log.error(message);
             throw new DataMissingException(message);
         }
@@ -87,7 +91,7 @@ public class BankAccountService {
                 .getBankAccountByClientId(userIdAndMoneyDTO.getClientId());
 
         if (optionalBankAccount.isEmpty()) {
-            String message = "User with this id does not exist";
+            String message = "Client with this id does not exist";
             log.error(message);
             throw new DataMissingException(message);
         }
@@ -115,7 +119,7 @@ public class BankAccountService {
                         userIdAndMoneyDTO.getClientId());
 
         if (optionalBankAccount.isEmpty()) {
-            String message = "User with this id does not exist";
+            String message = "Client with this id does not exist";
             log.error(message);
             throw new DataMissingException(message);
         }
@@ -201,16 +205,24 @@ public class BankAccountService {
     @Transactional(isolation = Isolation.SERIALIZABLE,
             rollbackFor = { UniquenessViolationException.class })
     public void createAccount(ClientIdDTO clientIdDTO)
-            throws UniquenessViolationException {
+            throws UniquenessViolationException, DataMissingException {
 
         Optional<BankAccount> optionalBankAccount =
                 bankAccountRepository.getBankAccountByClientId(
                         clientIdDTO.getClientId());
-
-        if (optionalBankAccount.isPresent()) {
-            String message = "User account with this id already exists";
-            log.error(message);
-            throw new UniquenessViolationException(message);
+        try {
+            if (!clientService.
+                    isClientWithThisIdExist(clientIdDTO.getClientId())) {
+                throw new DataMissingException(
+                        "Client with this ID not found");
+            }
+            if (optionalBankAccount.isPresent()) {
+                throw new UniquenessViolationException(
+                        "Client account with this id already exists");
+            }
+        } catch (DataMissingException | UniquenessViolationException e) {
+            log.error(e.getMessage());
+            throw e;
         }
         bankAccountRepository.save(new BankAccount(clientIdDTO.getClientId()));
     }
@@ -225,7 +237,7 @@ public class BankAccountService {
                         clientIdDTO.getClientId());
 
         if (optionalBankAccount.isEmpty()) {
-            String message = "User with this id does not exist";
+            String message = "Client with this id does not exist";
             log.error(message);
             throw new DataMissingException(message);
         }

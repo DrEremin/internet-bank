@@ -2,6 +2,7 @@ package ru.dreremin.internetbank.controllers;
 
 import java.math.BigDecimal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.dreremin.internetbank.dto.*;
 import ru.dreremin.internetbank.dto.impl.*;
@@ -15,6 +16,7 @@ import ru.dreremin.internetbank.services.OperationDescriptionService;
 public class InternetBankController {
 
     private final BankAccountService bankAccountService;
+
     private final OperationDescriptionService operationDescriptionService;
 
     public InternetBankController(
@@ -82,7 +84,8 @@ public class InternetBankController {
 
     @PutMapping(value="/create-account", consumes="application/json")
     public StatusOperationDTO createAccount(@RequestBody ClientIdDTO dto)
-            throws IncorrectNumberException, UniquenessViolationException {
+            throws IncorrectNumberException,
+            UniquenessViolationException, DataMissingException {
 
         dto.validation();
         bankAccountService.createAccount(dto);

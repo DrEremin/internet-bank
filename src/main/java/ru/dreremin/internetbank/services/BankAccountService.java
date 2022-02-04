@@ -84,11 +84,11 @@ public class BankAccountService {
     @Transactional(
             isolation = Isolation.SERIALIZABLE,
             rollbackFor = DataMissingException.class)
-    public void putMoney(ClientIdAndMoneyDTO userIdAndMoneyDTO) throws
+    public void putMoney(ClientIdAndMoneyDTO clientIdAndMoneyDTO) throws
             DataMissingException {
 
         Optional<BankAccount> optionalBankAccount = bankAccountRepository
-                .getBankAccountByClientId(userIdAndMoneyDTO.getClientId());
+                .getBankAccountByClientId(clientIdAndMoneyDTO.getClientId());
 
         if (optionalBankAccount.isEmpty()) {
             String message = "Client with this id does not exist";
@@ -98,25 +98,25 @@ public class BankAccountService {
 
         BankAccount bankAccount = optionalBankAccount.get();
         increaseBalance(
-                userIdAndMoneyDTO.getMoney(),
+                clientIdAndMoneyDTO.getMoney(),
                 bankAccount);
 
         operationService.saveOperation(
-                userIdAndMoneyDTO,
+                clientIdAndMoneyDTO,
                 bankAccount.getId(),
                 OperationTypes.PUT_MONEY.getValue(),
-                userIdAndMoneyDTO.getMoney());
+                clientIdAndMoneyDTO.getMoney());
     }
 
     @Transactional(isolation =
             Isolation.SERIALIZABLE, rollbackFor =
             { DataMissingException.class, NotEnoughMoneyException.class })
-    public void takeMoney(ClientIdAndMoneyDTO userIdAndMoneyDTO)
+    public void takeMoney(ClientIdAndMoneyDTO clientIdAndMoneyDTO)
             throws DataMissingException, NotEnoughMoneyException {
 
         Optional<BankAccount> optionalBankAccount =
                 bankAccountRepository.getBankAccountByClientId(
-                        userIdAndMoneyDTO.getClientId());
+                        clientIdAndMoneyDTO.getClientId());
 
         if (optionalBankAccount.isEmpty()) {
             String message = "Client with this id does not exist";
@@ -125,13 +125,13 @@ public class BankAccountService {
         }
 
         BankAccount bankAccount = optionalBankAccount.get();
-        reduceBalance(userIdAndMoneyDTO.getMoney(), bankAccount);
+        reduceBalance(clientIdAndMoneyDTO.getMoney(), bankAccount);
 
         operationService.saveOperation(
-                userIdAndMoneyDTO,
+                clientIdAndMoneyDTO,
                 bankAccount.getId(),
                 OperationTypes.TAKE_MONEY.getValue(),
-                userIdAndMoneyDTO.getMoney());
+                clientIdAndMoneyDTO.getMoney());
     }
 
     private void reduceBalance(BigDecimal money, BankAccount bankAccount)

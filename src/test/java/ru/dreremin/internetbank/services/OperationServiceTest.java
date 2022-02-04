@@ -1,8 +1,7 @@
 package ru.dreremin.internetbank.services;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.*;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -13,15 +12,13 @@ import ru.dreremin.internetbank.models.Operation;
 import ru.dreremin.internetbank.repositories.OperationRepository;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 
 import static org.mockito.Mockito.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Slf4j
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class OperationServiceTest {
@@ -44,8 +41,10 @@ class OperationServiceTest {
 
     BigDecimal TRANSACTION_AMOUNT = BigDecimal.valueOf(100.55);
 
+    Instant time;
+
     @BeforeAll
-    void testInit() {
+    void beforeAll() {
 
         String date = "2020-05-01", time = "12:00:00", zone = "Europe/Moscow";
         ZonedDateTime zonedDateTime = ZonedDateTime.of(
@@ -61,6 +60,16 @@ class OperationServiceTest {
                 this.OPERATION_TYPE,
                 zonedDateTime,
                 this.TRANSACTION_AMOUNT);
+    }
+
+    @BeforeEach
+    void beforeEach() {
+        time = Instant.now();
+    }
+
+    @AfterEach
+    void afterEach() {
+        log.info("run time: " + Duration.between(time, Instant.now()));
     }
 
     @Test

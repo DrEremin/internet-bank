@@ -1,8 +1,12 @@
 package ru.dreremin.internetbank.services;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.*;
@@ -12,12 +16,9 @@ import ru.dreremin.internetbank.dto.DateTimesOfPeriodWithZoneIdDTO;
 import ru.dreremin.internetbank.models.OperationDescription;
 import ru.dreremin.internetbank.repositories.OperationDescriptionRepository;
 
-import java.math.BigDecimal;
-import java.time.ZonedDateTime;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
+@Slf4j
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class OperationDescriptionServiceTest {
@@ -36,8 +37,10 @@ class OperationDescriptionServiceTest {
 
     private List<OperationDescription> descriptionsAllList;
 
+    private Instant time;
+
     @BeforeAll
-    void testInit() {
+    void beforeAll() {
 
         String startDate = "2022-01-30",
                 endDate = "2022-03-01",
@@ -77,7 +80,16 @@ class OperationDescriptionServiceTest {
 
         when(this.repository.getAll(any(Sort.class)))
                 .thenReturn(this.descriptionsAllList);
+    }
 
+    @BeforeEach
+    void beforeEach() {
+        time = Instant.now();
+    }
+
+    @AfterEach
+    void afterEach() {
+        log.info("run time: " + Duration.between(time, Instant.now()));
     }
 
     @Test

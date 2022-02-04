@@ -51,6 +51,19 @@ public class Operation {
         this.amountOfOperation = amountOfOperation;
     }
 
+    public Operation(long id,
+                     long accountId,
+                     int operationTypeId,
+                     ZonedDateTime timeAndDateOfOperation,
+                     BigDecimal amountOfOperation) {
+
+        this.id = id;
+        this.accountId = accountId;
+        this.operationTypeId = operationTypeId;
+        this.timeAndDateOfOperation = timeAndDateOfOperation;
+        this.amountOfOperation = amountOfOperation;
+    }
+
     public void setTimeAndDateOfOperation(LocalDate localDate,
                                           LocalTime localTime,
                                           ZoneId zoneId) {
@@ -60,6 +73,10 @@ public class Operation {
     }
 
     public long getId() { return id; }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public long getAccountId() { return accountId; }
 

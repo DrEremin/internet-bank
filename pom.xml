@@ -11,7 +11,7 @@
     <groupId>ru.dreremin</groupId>
     <artifactId>internet-bank</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>internet-bank</name>
     <description>internet-bank</description>
     <properties>
@@ -68,6 +68,11 @@
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
             <version>7.0.2.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

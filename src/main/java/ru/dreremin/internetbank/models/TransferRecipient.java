@@ -12,7 +12,9 @@ public class TransferRecipient {
     @EmbeddedId
     private TransferRecipientPkey id;
 
-    public TransferRecipient() {}
+    public TransferRecipient() {
+        this(null);
+    }
 
     public TransferRecipient(TransferRecipientPkey id) {
         this.id = id;

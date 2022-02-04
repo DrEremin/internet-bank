@@ -80,6 +80,17 @@ time they succeed.<br>
 
 <hr>
 
+## Particularities of the application  starting
+
+1. To run the application, you need to specify the VM option<br>
+  -Dspring.profiles.active=main. This is necessary because the active profile<br> 
+  by default set for testing.<br>
+2. It is necessary to set the absolute path to the project main folder in the<br>
+   LOG_DIR environment variable (/...absolute_path.../internet-bank/src).<br>
+   This is required to set up entries in the log files.
+
+<hr>
+
 ## Database
 DBMS - PostgreSQL<br>
 Сurrently the database is represented by the following tables:<br>

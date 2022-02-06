@@ -8,7 +8,7 @@ import ru.dreremin.internetbank.exceptions.SameIdException;
 
 public abstract class BankAccountDTO {
 
-    protected final long clientId;
+    protected long clientId;
 
     protected final boolean isRealInputNumber;
 
@@ -42,4 +42,8 @@ public abstract class BankAccountDTO {
     public LocalTime getLocalTime() { return localTime; }
 
     public ZoneId getZoneId() { return zoneId; }
+
+    public void setId(long clientId) {
+        this.clientId = clientId;
+    }
 }

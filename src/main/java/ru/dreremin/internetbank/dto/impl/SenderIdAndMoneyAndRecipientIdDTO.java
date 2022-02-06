@@ -16,19 +16,19 @@ import ru.dreremin.internetbank.exceptions.SameIdException;
 public class SenderIdAndMoneyAndRecipientIdDTO
         extends BankAccountDTO implements Serializable {
 
-    private final long recipientId;
+    private long recipientId;
     private final BigDecimal money;
     private final boolean isRealInputNumberOfRecipientId;
 
     @JsonCreator
-    public SenderIdAndMoneyAndRecipientIdDTO(double userId,
+    public SenderIdAndMoneyAndRecipientIdDTO(double clientId,
                                              double recipientId,
                                              BigDecimal money,
                                              String localDate,
                                              String localTime,
                                              String zoneId) {
 
-        super(userId, localDate, localTime, zoneId);
+        super(clientId, localDate, localTime, zoneId);
         this.money = money.setScale(2, RoundingMode.DOWN);
         this.recipientId = (long) recipientId;
         this.isRealInputNumberOfRecipientId =
@@ -68,4 +68,7 @@ public class SenderIdAndMoneyAndRecipientIdDTO
 
     public BigDecimal getMoney() { return money; }
 
+    public void setRecipientId(long recipientId) {
+        this.recipientId = recipientId;
+    }
 }

@@ -23,7 +23,7 @@ internet-bank/src/main/resources/logs.<br><br>
 
 * REST API implemented in package ru.dreremin.internetbank.controllers.<br>
   Classes responsible for implementation:<br>
-  InternetBankController, ManagementBankController,OperationsController;<br>
+  InternetBankController, ManagementBankController, OperationsController;<br>
 * The service layer is represented by the package<br> 
   ru.dreremin.internetbank.services with classes:<br>
   BankAccountService, BankAccountManager, OperationService,<br>

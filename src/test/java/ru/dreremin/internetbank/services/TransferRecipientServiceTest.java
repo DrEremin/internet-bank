@@ -1,7 +1,6 @@
 package ru.dreremin.internetbank.services;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

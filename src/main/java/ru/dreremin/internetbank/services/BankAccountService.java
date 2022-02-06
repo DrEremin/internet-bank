@@ -13,7 +13,6 @@ import ru.dreremin.internetbank.dto.impl.ClientIdAndMoneyDTO;
 import ru.dreremin.internetbank.enums.OperationTypes;
 import ru.dreremin.internetbank.exceptions.DataMissingException;
 import ru.dreremin.internetbank.exceptions.NotEnoughMoneyException;
-import ru.dreremin.internetbank.exceptions.UniquenessViolationException;
 import ru.dreremin.internetbank.models.BankAccount;
 import ru.dreremin.internetbank.repositories.BankAccountRepository;
 
@@ -27,33 +26,14 @@ public class BankAccountService {
 
     private final TransferRecipientService transferRecipientService;
 
-    private final ClientService clientService;
-
     public BankAccountService(
             BankAccountRepository bankAccountRepository,
             OperationService operationService,
-            TransferRecipientService transferRecipientService,
-            ClientService clientService) {
+            TransferRecipientService transferRecipientService) {
 
         this.bankAccountRepository = bankAccountRepository;
         this.operationService = operationService;
         this.transferRecipientService = transferRecipientService;
-        this.clientService = clientService;
-    }
-
-    public BankAccountRepository getBankAccountRepository() {
-
-        return bankAccountRepository;
-    }
-
-    public OperationService getOperationService() {
-
-        return operationService;
-    }
-
-    public TransferRecipientService getTransferRecipientService() {
-
-        return transferRecipientService;
     }
 
     @Transactional(
@@ -200,48 +180,6 @@ public class BankAccountService {
         transferRecipientService.saveTransferRecipient(
                 optionalBankAccountRecipient.get().getId(),
                 operationId);
-    }
-
-    @Transactional(isolation = Isolation.SERIALIZABLE,
-            rollbackFor = { UniquenessViolationException.class })
-    public void createAccount(ClientIdDTO clientIdDTO)
-            throws UniquenessViolationException, DataMissingException {
-
-        Optional<BankAccount> optionalBankAccount =
-                bankAccountRepository.getBankAccountByClientId(
-                        clientIdDTO.getClientId());
-        try {
-            if (!clientService.
-                    isClientWithThisIdExist(clientIdDTO.getClientId())) {
-                throw new DataMissingException(
-                        "Client with this ID not found");
-            }
-            if (optionalBankAccount.isPresent()) {
-                throw new UniquenessViolationException(
-                        "Client account with this id already exists");
-            }
-        } catch (DataMissingException | UniquenessViolationException e) {
-            log.error(e.getMessage());
-            throw e;
-        }
-        bankAccountRepository.save(new BankAccount(clientIdDTO.getClientId()));
-    }
-
-    @Transactional(isolation = Isolation.SERIALIZABLE,
-            rollbackFor = { DataMissingException.class })
-    public void deleteAccount(ClientIdDTO clientIdDTO)
-            throws DataMissingException {
-
-        Optional<BankAccount> optionalBankAccount =
-                bankAccountRepository.getBankAccountByClientId(
-                        clientIdDTO.getClientId());
-
-        if (optionalBankAccount.isEmpty()) {
-            String message = "Client with this id does not exist";
-            log.error(message);
-            throw new DataMissingException(message);
-        }
-        bankAccountRepository.delete(optionalBankAccount.get());
     }
 }
 

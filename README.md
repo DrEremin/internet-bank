@@ -21,21 +21,22 @@ internet-bank/src/main/resources/logs.<br><br>
 
 ## Structural elements
 
-* REST API implemented in a class<br>
-  ru.dreremin.internetbank.controllers.InternetBankController;<br>
+* REST API implemented in package ru.dreremin.internetbank.controllers.<br>
+  Classes responsible for implementation:<br>
+  InternetBankController, ManagementBankController,OperationsController;<br>
 * The service layer is represented by the package<br> 
   ru.dreremin.internetbank.services with classes:<br>
-  BankAccountService, OperationService, OperationDescriptionService,<br> 
-  TransferRecepientService;<br>
+  BankAccountService, BankAccountManager, OperationService,<br>
+  OperationDescriptionService, TransferRecepientService;<br>
 * Models that display database entities are contained in the package<br> 
   ru.dreremin.internetbank.models. They represented by classes: BankAccount,<br>
-  Operation, OperationType, TransferRecipient. Class-model OperationDescription<br> 
-  don't is mapping any a table from database. This is a model of a string<br>
-  transmitted to the client with information about the operation with the<br>
-  account;<br>
-* In package ru.dreremin.internetbank.repositories placed interfaces inherited<br>
-  from JpaRepository<T,ID>: BankAccountRepository,<br> 
-  OperationDescriptionRepository, OperationRepository,<br>
+  Client, Operation, OperationType, TransferRecipient. Class-model<br>
+  OperationDescription don't is mapping any a table from database.<br>
+  This is a model of a string transmitted to the client with information<br>
+  about the operation with the account;<br>
+* In package ru.dreremin.internetbank.repositories placed interfaces<br>
+  inherited from JpaRepository<T,ID>: BankAccountRepository,<br>
+  ClientRepository, OperationDescriptionRepository, OperationRepository,<br>
   TransferRecipientRepository. They are necessary for direct interaction with<br>
   the database through the mechanism Spring Data JPA;<br>
 * In package ru.dreremin.internetbank.exceptions placed custom exception<br>
@@ -45,8 +46,8 @@ internet-bank/src/main/resources/logs.<br><br>
   conflict situations and representation full information to client.<br>
   To manage exceptions was provided the class<br>
   ru.dreremin.internetbank.controllers.ExceptionController;<br>
-* To receive and transmit data in .JSON format, was implemented classes located<br>
-  in the package ru.dreremin.internetbank.dto: StatusOperationDTO,<br>
+* To receive and transmit data in .JSON format, was implemented classes<br>
+  located in the package ru.dreremin.internetbank.dto: StatusOperationDTO,<br>
   OperationListDTO, DateTimeOfPeriodWithZoneIdDto, BankAccountDTO,<br>
   BalanceDTO, SenderIdAndMoneyAndRecipientIdDTO, ClientIdDTO,<br>
   ClientIdAndMoneyDTO.<br><br>
@@ -54,7 +55,8 @@ internet-bank/src/main/resources/logs.<br><br>
 
 ## App interaction points
 
-App interaction points represented methods of class BankAccountController:<br>
+App interaction points represented methods of classes InternetBankController,<br>
+ManagementBankAccountController, OperationsController:<br>
 * getBalance() - accepts the client's ID, returns the amount on the account of<br>
   this client;<br>
 * putMoney() - accepts the client's ID and amount, adds specified value of<br> 
@@ -494,7 +496,7 @@ DBMS - PostgreSQL<br>
     </tr>
     <tr>
       <td align="center">1</td>
-      <td>Incorrect user id format</td>
+      <td>Incorrect client ID format</td>
       <td align="center">-1</td>
       <td>IncorrectNumberException</td>
       <td align="center">400</td>
@@ -522,7 +524,7 @@ DBMS - PostgreSQL<br>
     </tr>
     <tr>
       <td align="center">5</td>
-      <td>User with this id not found</td>
+      <td>Client with this ID not found</td>
       <td align="center">0</td>
       <td>DataMissingException</td>
       <td align="center">404</td>
@@ -532,7 +534,7 @@ DBMS - PostgreSQL<br>
     </tr>
     <tr>
       <td align="center">1</td>
-      <td>Incorrect user ID format</td>
+      <td>Incorrect client ID format</td>
       <td align="center">-1</td>
       <td>IncorrectNumberException</td>
       <td align="center">400</td>
@@ -567,7 +569,7 @@ DBMS - PostgreSQL<br>
     </tr>
     <tr>
       <td align="center">6</td>
-      <td>User with this ID not found</td>
+      <td>Client with this ID not found</td>
       <td align="center">0</td>
       <td>DataMissingException</td>
       <td align="center">404</td>
@@ -584,7 +586,7 @@ DBMS - PostgreSQL<br>
     </tr>
     <tr>
       <td align="center">1</td>
-      <td>Incorrect user ID format</td>
+      <td>Incorrect client ID format</td>
       <td align="center">-1</td>
       <td>IncorrectNumberException</td>
       <td align="center">400</td>
@@ -619,7 +621,7 @@ DBMS - PostgreSQL<br>
     </tr>
     <tr>
       <td align="center">6</td>
-      <td>User with this ID not found</td>
+      <td>Client with this ID not found</td>
       <td align="center">0</td>
       <td>DataMissingException</td>
       <td align="center">404</td>
@@ -698,7 +700,7 @@ DBMS - PostgreSQL<br>
       <td align="center">422</td>
     </tr>
     <tr>
-      <th colspan="5" align="left">BankAccountController.getOperationList()</th>
+      <th colspan="5" align="left">OperationsController.getOperationList()</th>
     </tr>
     <tr>
       <td align="center">1</td>
@@ -727,6 +729,89 @@ DBMS - PostgreSQL<br>
       <td align="center">0</td>
       <td>DateTimeOutOfBoundsException</td>
       <td align="center">422</td>
+    </tr>
+    <tr>
+      <th colspan="5" align="left">ManagementBankAccountController.createAccount()</th>
+    </tr>
+    <tr>
+      <td align="center">1</td>
+      <td>Incorrect client ID format</td>
+      <td align="center">-1</td>
+      <td>IncorrectNumberException</td>
+      <td align="center">400</td>
+    </tr>
+    <tr>
+      <td align="center">2</td>
+      <td>Incorrect date/time format</td>
+      <td align="center">-1</td>
+      <td>DateTimeParseException</td>
+      <td align="center">400</td>
+    </tr>
+    <tr>
+      <td align="center">3</td>
+      <td>Incorrect timezone format</td>
+      <td align="center">-1</td>
+      <td>DateTimeException</td>
+      <td align="center">400</td>
+    </tr>
+    <tr>
+      <td align="center">4</td>
+      <td>Time zone not found</td>
+      <td align="center">0</td>
+      <td>ZoneRulesException</td>
+      <td align="center">404</td>
+    </tr>
+    <tr>
+      <td align="center">5</td>
+      <td>Client with this ID not found</td>
+      <td align="center">0</td>
+      <td>DataMissingException</td>
+      <td align="center">404</td>
+    </tr>
+    <tr>
+      <td align="center">6</td>
+      <td>Client account with this ID already exists</td>
+      <td align="center">0</td>
+      <td>UniquenessViolationException</td>
+      <td align="center">404</td>
+    </tr>
+    <tr>
+      <th colspan="5" align="left">ManagementBankAccountController.deleteAccount()</th>
+    </tr>
+    <tr>
+      <td align="center">1</td>
+      <td>Incorrect client ID format</td>
+      <td align="center">-1</td>
+      <td>IncorrectNumberException</td>
+      <td align="center">400</td>
+    </tr>
+    <tr>
+      <td align="center">2</td>
+      <td>Incorrect date/time format</td>
+      <td align="center">-1</td>
+      <td>DateTimeParseException</td>
+      <td align="center">400</td>
+    </tr>
+    <tr>
+      <td align="center">3</td>
+      <td>Incorrect timezone format</td>
+      <td align="center">-1</td>
+      <td>DateTimeException</td>
+      <td align="center">400</td>
+    </tr>
+    <tr>
+      <td align="center">4</td>
+      <td>Time zone not found</td>
+      <td align="center">0</td>
+      <td>ZoneRulesException</td>
+      <td align="center">404</td>
+    </tr>
+    <tr>
+      <td align="center">5</td>
+      <td>Client with this ID not found</td>
+      <td align="center">0</td>
+      <td>DataMissingException</td>
+      <td align="center">404</td>
     </tr>
   </tbody>
 </table>

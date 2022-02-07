@@ -12,12 +12,12 @@ import ru.dreremin.internetbank.exceptions.IncorrectNumberException;
 public class ClientIdDTO extends BankAccountDTO implements Serializable {
 
     @JsonCreator
-    public ClientIdDTO(double userId,
+    public ClientIdDTO(double clientId,
                        String localDate,
                        String localTime,
                        String zoneId) {
 
-        super(userId, localDate, localTime, zoneId);
+        super(clientId, localDate, localTime, zoneId);
     }
 
     @Override

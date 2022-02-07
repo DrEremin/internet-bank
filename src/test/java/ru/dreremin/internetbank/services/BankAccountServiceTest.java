@@ -10,6 +10,8 @@ import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.*;
+
+import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -136,7 +138,7 @@ class BankAccountServiceTest {
     @Test
     void testGetBalance_WhenClientWithThisIdDoesNotExist() throws DataMissingException{
 
-        this.clientIdDTO.setId(Ids.EMPTY.getId());
+        this.clientIdDTO.setClientId(Ids.EMPTY.getId());
 
         assertThrowsExactly(DataMissingException.class,
                 ()->this.service.getBalance(clientIdDTO));
@@ -145,7 +147,7 @@ class BankAccountServiceTest {
     @Test
     void testGetBalance_WhenClientWithThisIdIsExist() throws DataMissingException {
 
-        this.clientIdDTO.setId(Ids.BANK_ACCOUNT.getId());
+        this.clientIdDTO.setClientId(Ids.BANK_ACCOUNT.getId());
 
         assertDoesNotThrow(()->this.service.getBalance(this.clientIdDTO));
 
@@ -156,7 +158,7 @@ class BankAccountServiceTest {
     @Test
     void testPutMoney_WhenClientWithThisIdDoesNotExist() {
 
-        this.clientIdAndMoneyDTO.setId(Ids.EMPTY.getId());
+        this.clientIdAndMoneyDTO.setClientId(Ids.EMPTY.getId());
 
         assertThrowsExactly(DataMissingException.class,
                 ()->this.service.putMoney(this.clientIdAndMoneyDTO));
@@ -166,7 +168,7 @@ class BankAccountServiceTest {
     @Test
     void testPutMoney_WhenClientWithThisIdIsExist() {
 
-        this.clientIdAndMoneyDTO.setId(Ids.BANK_ACCOUNT.getId());
+        this.clientIdAndMoneyDTO.setClientId(Ids.BANK_ACCOUNT.getId());
 
         assertDoesNotThrow(()->this.service
                 .putMoney(this.clientIdAndMoneyDTO));
@@ -178,7 +180,7 @@ class BankAccountServiceTest {
     @Test
     void testTakeMoney_WhenClientWithThisIdDoesNotExist() {
 
-        this.clientIdAndMoneyDTO.setId(Ids.EMPTY.getId());
+        this.clientIdAndMoneyDTO.setClientId(Ids.EMPTY.getId());
 
         assertThrowsExactly(DataMissingException.class,
                 ()->this.service.takeMoney(this.clientIdAndMoneyDTO));
@@ -187,7 +189,7 @@ class BankAccountServiceTest {
     @Test
     void testTakeMoney_WhenClientWithThisIdIsExistAndIsEnoughMoney() {
 
-        this.clientIdAndMoneyDTO.setId(Ids.BANK_ACCOUNT.getId());
+        this.clientIdAndMoneyDTO.setClientId(Ids.BANK_ACCOUNT.getId());
 
         assertDoesNotThrow(()->this.service
                 .takeMoney(this.clientIdAndMoneyDTO));
@@ -200,7 +202,7 @@ class BankAccountServiceTest {
     void testTakeMoney_WhenClientWithThisIdIsExistAndIsNotEnoughMoney() {
 
         this.bankAccount.setCurrentBalance(BigDecimal.valueOf(1.0));
-        this.clientIdAndMoneyDTO.setId(Ids.BANK_ACCOUNT.getId());
+        this.clientIdAndMoneyDTO.setClientId(Ids.BANK_ACCOUNT.getId());
 
         assertThrowsExactly(NotEnoughMoneyException.class,
                 ()->this.service.takeMoney(this.clientIdAndMoneyDTO));
@@ -212,7 +214,7 @@ class BankAccountServiceTest {
     @Test
     void testTransferMoney_WhenSenderWithThisIdDoesNotExist () {
 
-        this.senderIdAndMoneyAndRecipientIdDTO.setId(Ids.EMPTY.getId());
+        this.senderIdAndMoneyAndRecipientIdDTO.setClientId(Ids.EMPTY.getId());
         this.senderIdAndMoneyAndRecipientIdDTO.setRecipientId(
                 Ids.BANK_ACCOUNT_RECIPIENT.getId());
 
@@ -224,8 +226,10 @@ class BankAccountServiceTest {
     @Test
     void testTransferMoney_WhenRecipientWithThisIdDoesNotExist () {
 
-        this.senderIdAndMoneyAndRecipientIdDTO.setId(Ids.BANK_ACCOUNT.getId());
-        this.senderIdAndMoneyAndRecipientIdDTO.setRecipientId(Ids.EMPTY.getId());
+        this.senderIdAndMoneyAndRecipientIdDTO
+                .setClientId(Ids.BANK_ACCOUNT.getId());
+        this.senderIdAndMoneyAndRecipientIdDTO
+                .setRecipientId(Ids.EMPTY.getId());
 
         assertThrowsExactly(DataMissingException.class,
                 ()->this.service.transferMoney(
@@ -236,9 +240,10 @@ class BankAccountServiceTest {
     void testTransferMoney_WhenBothIdIsExistAndNotEnoughMoney() {
 
         this.bankAccount.setCurrentBalance(BigDecimal.valueOf(10));
-        this.senderIdAndMoneyAndRecipientIdDTO.setId(Ids.BANK_ACCOUNT.getId());
-        this.senderIdAndMoneyAndRecipientIdDTO.setRecipientId(
-                Ids.BANK_ACCOUNT_RECIPIENT.getId());
+        this.senderIdAndMoneyAndRecipientIdDTO
+                .setClientId(Ids.BANK_ACCOUNT.getId());
+        this.senderIdAndMoneyAndRecipientIdDTO
+                .setRecipientId(Ids.BANK_ACCOUNT_RECIPIENT.getId());
 
         assertThrowsExactly(NotEnoughMoneyException.class,
                 ()->this.service.transferMoney(
@@ -248,9 +253,10 @@ class BankAccountServiceTest {
     @Test
     void testTransferMoney_WhenBothIdIsExistAndEnoughMoney() {
 
-        this.senderIdAndMoneyAndRecipientIdDTO.setId(Ids.BANK_ACCOUNT.getId());
-        this.senderIdAndMoneyAndRecipientIdDTO.setRecipientId(
-                Ids.BANK_ACCOUNT_RECIPIENT.getId());
+        this.senderIdAndMoneyAndRecipientIdDTO
+                .setClientId(Ids.BANK_ACCOUNT.getId());
+        this.senderIdAndMoneyAndRecipientIdDTO
+                .setRecipientId(Ids.BANK_ACCOUNT_RECIPIENT.getId());
 
         assertDoesNotThrow(()->this.service.transferMoney(
                 this.senderIdAndMoneyAndRecipientIdDTO));

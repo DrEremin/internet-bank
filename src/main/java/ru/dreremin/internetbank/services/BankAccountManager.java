@@ -26,7 +26,6 @@ public class BankAccountManager {
         this.repository = repository;
     }
 
-
     @Transactional(isolation = Isolation.SERIALIZABLE,
             rollbackFor = { UniquenessViolationException.class })
     public void createAccount(ClientIdDTO clientIdDTO)

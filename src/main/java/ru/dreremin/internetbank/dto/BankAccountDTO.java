@@ -43,7 +43,7 @@ public abstract class BankAccountDTO {
 
     public ZoneId getZoneId() { return zoneId; }
 
-    public void setId(long clientId) {
+    public void setClientId(long clientId) {
         this.clientId = clientId;
     }
 }

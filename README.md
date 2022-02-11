@@ -773,7 +773,7 @@ DBMS - PostgreSQL<br>
       <td>Client account with this ID already exists</td>
       <td align="center">0</td>
       <td>UniquenessViolationException</td>
-      <td align="center">404</td>
+      <td align="center">422</td>
     </tr>
     <tr>
       <th colspan="5" align="left">ManagementBankAccountController.deleteAccount()</th>

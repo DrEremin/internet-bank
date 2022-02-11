@@ -10,8 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.dreremin.internetbank.dto.impl.ClientIdDTO;
 import ru.dreremin.internetbank.exceptions.DataMissingException;
 import ru.dreremin.internetbank.exceptions.UniquenessViolationException;
@@ -24,16 +26,16 @@ import ru.dreremin.internetbank.repositories.ClientRepository;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BankAccountManagerTest {
 
-    @InjectMocks
+    @Autowired
     private BankAccountManager manager;
 
-    @Mock
+    @MockBean
     private ClientService service;
 
-    @Mock
+    @MockBean
     private BankAccountRepository bankAccountRepository;
 
-    @Mock
+    @MockBean
     private ClientRepository clientRepository;
 
     private Instant time;
@@ -101,7 +103,7 @@ class BankAccountManagerTest {
     }
 
     @Test
-    void testCreateAccount_IfExceptionsWereNotThrown() {
+    void testCreateAccount_IfExceptionsNotThrown() {
 
         long value = 2;
 
@@ -115,5 +117,35 @@ class BankAccountManagerTest {
 
         verify(this.bankAccountRepository,
                 times(1)).save(any(BankAccount.class));
+    }
+
+    @Test
+    void testDeleteAccount_IfClientWithThisIdDoesNotExist() {
+
+        long value = 4;
+
+        when(this.bankAccountRepository.getBankAccountByClientId(value))
+                .thenReturn(Optional.empty());
+
+        this.dto.setClientId(value);
+
+        assertThrowsExactly(DataMissingException.class,
+                () -> manager.deleteAccount(this.dto));
+    }
+
+    @Test
+    void testDeleteAccount_IfExceptionNotThrown() {
+
+        long value = 5;
+
+        when(this.bankAccountRepository.getBankAccountByClientId(value))
+                .thenReturn(Optional.of(this.bankAccount));
+
+        this.dto.setClientId(value);
+
+        assertDoesNotThrow(() -> manager.deleteAccount(this.dto));
+
+        verify(this.bankAccountRepository,
+                times(1)).delete(any(BankAccount.class));
     }
 }

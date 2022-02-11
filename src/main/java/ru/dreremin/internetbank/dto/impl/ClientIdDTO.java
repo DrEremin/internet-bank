@@ -1,21 +1,22 @@
 package ru.dreremin.internetbank.dto.impl;
 
 import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.extern.slf4j.Slf4j;
+
 import ru.dreremin.internetbank.dto.BankAccountDTO;
 import ru.dreremin.internetbank.exceptions.IncorrectNumberException;
 
 @Slf4j
-@JsonIgnoreProperties({ "isRealInputNumber" })
 public class ClientIdDTO extends BankAccountDTO implements Serializable {
 
     @JsonCreator
-    public ClientIdDTO(double clientId,
-                       String localDate,
-                       String localTime,
-                       String zoneId) {
+    public ClientIdDTO(@JsonProperty("clientId") double clientId,
+                       @JsonProperty("localDate") String localDate,
+                       @JsonProperty("localTime") String localTime,
+                       @JsonProperty("zoneId") String zoneId) {
 
         super(clientId, localDate, localTime, zoneId);
     }

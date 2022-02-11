@@ -1,20 +1,22 @@
 package ru.dreremin.internetbank.services;
 
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.*;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
-import ru.dreremin.internetbank.models.Client;
-import ru.dreremin.internetbank.repositories.ClientRepository;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Optional;
 
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
+
+import ru.dreremin.internetbank.models.Client;
+import ru.dreremin.internetbank.repositories.ClientRepository;
+
 
 @Slf4j
 @SpringBootTest

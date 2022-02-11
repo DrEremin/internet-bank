@@ -1,23 +1,24 @@
 package ru.dreremin.internetbank.services;
 
+import java.util.Optional;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+
 import ru.dreremin.internetbank.dto.impl.ClientIdDTO;
 import ru.dreremin.internetbank.exceptions.DataMissingException;
 import ru.dreremin.internetbank.exceptions.UniquenessViolationException;
 import ru.dreremin.internetbank.models.BankAccount;
 import ru.dreremin.internetbank.repositories.BankAccountRepository;
 
-import java.util.Optional;
-
 @Slf4j
 @Service
 public class BankAccountManager {
 
-    ClientService service;
-    BankAccountRepository repository;
+    private final ClientService service;
+    private final BankAccountRepository repository;
 
     public BankAccountManager(ClientService service,
                               BankAccountRepository repository) {
@@ -61,7 +62,8 @@ public class BankAccountManager {
                         clientIdDTO.getClientId());
 
         if (optionalBankAccount.isEmpty()) {
-            String message = "Client with this id does not exist";
+            String message =
+                    "Client with this ID or his bank account does not exist";
             log.error(message);
             throw new DataMissingException(message);
         }

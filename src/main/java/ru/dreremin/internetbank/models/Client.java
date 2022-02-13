@@ -1,12 +1,14 @@
 package ru.dreremin.internetbank.models;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+
 import javax.persistence.*;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Getter
 @Entity
 @Table(name = "client")
 public class Client {
@@ -47,7 +49,7 @@ public class Client {
         }
     }
 
-    public long getId() {
+    /*public long getId() {
         return id;
     }
 
@@ -69,5 +71,5 @@ public class Client {
 
     public String getAddress() {
         return address;
-    }
+    }*/
 }

@@ -8,7 +8,6 @@ public class UniquenessViolationException extends Exception {
 
     @Override
     public String toString() {
-
         return "UniquenessViolationException: " + super.getMessage();
     }
 }

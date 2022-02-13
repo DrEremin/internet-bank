@@ -6,7 +6,6 @@ public class SameIdException extends Exception {
 
     @Override
     public String toString() {
-
         return "SameIdException: " + super.getMessage();
     }
 }

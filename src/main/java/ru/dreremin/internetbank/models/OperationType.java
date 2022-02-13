@@ -1,8 +1,13 @@
 package ru.dreremin.internetbank.models;
 
-import javax.persistence.*;
 import java.util.Objects;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import javax.persistence.*;
+
+@AllArgsConstructor
+@Getter
 @Entity
 @Table(name = "operation_type")
 public class OperationType {
@@ -17,16 +22,6 @@ public class OperationType {
 
     public OperationType() {}
 
-    public OperationType(long id, String operationName) {
-
-        this.id = id;
-        this.operationName = operationName;
-    }
-
-    public long getId() { return id; }
-
-    public String getOperationName() { return operationName; }
-
     @Override
     public boolean equals(Object o) {
 
@@ -39,7 +34,6 @@ public class OperationType {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(getId(), getOperationName());
     }
 }

@@ -8,7 +8,6 @@ public class IncorrectNumberException extends Exception {
 
     @Override
     public String toString() {
-
         return "IncorrectNumberException: " + super.getMessage();
     }
 }

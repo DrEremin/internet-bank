@@ -1,5 +1,10 @@
 package ru.dreremin.internetbank.enums;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@Getter
 public enum OperationTypes {
 
     GET_BALANCE (1),
@@ -9,7 +14,7 @@ public enum OperationTypes {
 
     private final int value;
 
-    OperationTypes(int value) { this.value = value; }
+    /*OperationTypes(int value) { this.value = value; }*/
 
-    public int getValue() { return value; }
+    /*public int getValue() { return value; }*/
 }

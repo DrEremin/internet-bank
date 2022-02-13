@@ -8,7 +8,6 @@ public class DataMissingException extends Exception {
 
     @Override
     public String toString() {
-
         return "DataMissingException: " + super.getMessage();
     }
 }

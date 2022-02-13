@@ -8,7 +8,6 @@ public class DateTimeOutOfBoundsException extends Exception {
 
     @Override
     public String toString() {
-
         return "DateTimeOutOfBoundsException: " + super.getMessage();
     }
 }

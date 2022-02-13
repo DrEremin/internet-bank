@@ -6,8 +6,11 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Objects;
-import javax.persistence.*;
 
+import javax.persistence.*;
+import lombok.Getter;
+
+@Getter
 @Entity
 @Table(name = "operation")
 public class Operation {
@@ -24,7 +27,7 @@ public class Operation {
     private int operationTypeId;
 
     @Column(name = "date_time")
-    private ZonedDateTime timeAndDateOfOperation;
+    private ZonedDateTime dateTimeOfOperation;
 
     @Column(name = "transaction_amount")
     private BigDecimal amountOfOperation;
@@ -42,25 +45,25 @@ public class Operation {
 
     public Operation(long accountId,
                      int operationTypeId,
-                     ZonedDateTime timeAndDateOfOperation,
+                     ZonedDateTime dateTimeOfOperation,
                      BigDecimal amountOfOperation) {
 
         this.accountId = accountId;
         this.operationTypeId = operationTypeId;
-        this.timeAndDateOfOperation = timeAndDateOfOperation;
+        this.dateTimeOfOperation = dateTimeOfOperation;
         this.amountOfOperation = amountOfOperation;
     }
 
     public Operation(long id,
                      long accountId,
                      int operationTypeId,
-                     ZonedDateTime timeAndDateOfOperation,
+                     ZonedDateTime dateTimeOfOperation,
                      BigDecimal amountOfOperation) {
 
         this.id = id;
         this.accountId = accountId;
         this.operationTypeId = operationTypeId;
-        this.timeAndDateOfOperation = timeAndDateOfOperation;
+        this.dateTimeOfOperation = dateTimeOfOperation;
         this.amountOfOperation = amountOfOperation;
     }
 
@@ -68,38 +71,25 @@ public class Operation {
                                           LocalTime localTime,
                                           ZoneId zoneId) {
 
-        this.timeAndDateOfOperation = ZonedDateTime.of(
+        this.dateTimeOfOperation = ZonedDateTime.of(
                 localDate, localTime, zoneId);
     }
-
-    public long getId() { return id; }
 
     public void setId(long id) {
         this.id = id;
     }
 
-    public long getAccountId() { return accountId; }
-
-    public int getOperationTypeId() { return operationTypeId; }
-
-    public ZonedDateTime getTimeAndDateOfOperation() {
-        return timeAndDateOfOperation;
-    }
-
-    public BigDecimal getAmountOfOperation() {
-        return amountOfOperation;
-    }
-
     @Override
     public boolean equals(Object o) {
+
         if (this == o) return true;
         if (!(o instanceof Operation)) return false;
         Operation operation = (Operation) o;
         return getId() == operation.getId()
                 && getAccountId() == operation.getAccountId()
                 && getOperationTypeId() == operation.getOperationTypeId()
-                && Objects.equals(getTimeAndDateOfOperation(),
-                        operation.getTimeAndDateOfOperation())
+                && Objects.equals(getDateTimeOfOperation(),
+                        operation.getDateTimeOfOperation())
                 && Objects.equals(getAmountOfOperation(),
                         operation.getAmountOfOperation());
     }

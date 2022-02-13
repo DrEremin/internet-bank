@@ -12,7 +12,7 @@ import org.mockito.Mock;
 import static org.mockito.Mockito.*;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Sort;
-import ru.dreremin.internetbank.dto.DateTimesOfPeriodWithZoneIdDTO;
+import ru.dreremin.internetbank.dto.ZonedDateTimePeriodDTO;
 import ru.dreremin.internetbank.models.OperationDescription;
 import ru.dreremin.internetbank.repositories.OperationDescriptionRepository;
 
@@ -29,9 +29,9 @@ class OperationDescriptionServiceTest {
     @Mock
     private OperationDescriptionRepository repository;
 
-    private DateTimesOfPeriodWithZoneIdDTO dtoWithoutNull;
+    private ZonedDateTimePeriodDTO dtoWithoutNull;
 
-    private DateTimesOfPeriodWithZoneIdDTO dtoWithNull;
+    private ZonedDateTimePeriodDTO dtoWithNull;
 
     private List<OperationDescription> descriptionsListWithinRange;
 
@@ -62,12 +62,12 @@ class OperationDescriptionServiceTest {
                 2,
                 (long)3));
 
-        this.dtoWithoutNull = new DateTimesOfPeriodWithZoneIdDTO(
+        this.dtoWithoutNull = new ZonedDateTimePeriodDTO(
                 startDate,
                 endDate,
                 zoneId);
 
-        this.dtoWithNull = new DateTimesOfPeriodWithZoneIdDTO(
+        this.dtoWithNull = new ZonedDateTimePeriodDTO(
                 startDate,
                 null,
                 zoneId);
@@ -94,14 +94,12 @@ class OperationDescriptionServiceTest {
 
     @Test
     void testGetOperationList_WhenDtoContainBothCorrectTimePoints() {
-
         assertEquals(this.descriptionsListWithinRange,
                 this.service.getOperationList(this.dtoWithoutNull));
     }
 
     @Test
     void testGetOperationList_WhenDtoContainNullableTimePoint() {
-
         assertEquals(this.descriptionsAllList,
                 this.service.getOperationList(this.dtoWithNull));
     }

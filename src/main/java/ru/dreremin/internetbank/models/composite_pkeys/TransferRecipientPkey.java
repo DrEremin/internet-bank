@@ -2,9 +2,12 @@ package ru.dreremin.internetbank.models.composite_pkeys;
 
 import java.io.Serializable;
 import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import lombok.Getter;
 
+@Getter
 @Embeddable
 public class TransferRecipientPkey implements Serializable {
 
@@ -17,14 +20,9 @@ public class TransferRecipientPkey implements Serializable {
     public TransferRecipientPkey() {}
 
     public TransferRecipientPkey(long recipientAccountId, long operationId) {
-
         this.recipientAccountId = recipientAccountId;
         this.operationId = operationId;
     }
-
-    public long getRecipientAccountId() { return recipientAccountId; }
-
-    public long getOperationId() { return operationId; }
 
     @Override
     public boolean equals(Object o) {

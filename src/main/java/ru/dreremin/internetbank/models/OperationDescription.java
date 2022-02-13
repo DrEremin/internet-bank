@@ -4,9 +4,12 @@ import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.Optional;
+
 import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Getter;
 
+@Getter
 @Entity
 @JsonIgnoreProperties({"operationId"})
 public class OperationDescription {
@@ -38,20 +41,9 @@ public class OperationDescription {
         this.operationName = operationName;
         this.transactionAmount = transactionAmount;
         this.senderAccountId = senderAccountId;
-        this.recipientAccountId = Optional.ofNullable(recipientAccountId).orElse((long)0);
+        this.recipientAccountId =
+                Optional.ofNullable(recipientAccountId).orElse((long)0);
     }
-
-    public long getOperationId() { return operationId; }
-
-    public ZonedDateTime getDateTime() { return dateTime; }
-
-    public String getOperationName() { return operationName; }
-
-    public BigDecimal getTransactionAmount() { return transactionAmount; }
-
-    public long getSenderAccountId() { return senderAccountId; }
-
-    public long getRecipientAccountId() { return recipientAccountId; }
 
     public void removingNullFromRecipientAccountId() {
         this.recipientAccountId =
@@ -60,6 +52,7 @@ public class OperationDescription {
 
     @Override
     public boolean equals(Object o) {
+
         if (this == o) return true;
         if (!(o instanceof OperationDescription)) return false;
         OperationDescription that = (OperationDescription) o;

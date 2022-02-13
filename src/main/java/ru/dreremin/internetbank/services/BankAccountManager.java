@@ -2,6 +2,7 @@ package ru.dreremin.internetbank.services;
 
 import java.util.Optional;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -14,18 +15,12 @@ import ru.dreremin.internetbank.models.BankAccount;
 import ru.dreremin.internetbank.repositories.BankAccountRepository;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class BankAccountManager {
 
     private final ClientService service;
     private final BankAccountRepository repository;
-
-    public BankAccountManager(ClientService service,
-                              BankAccountRepository repository) {
-
-        this.service = service;
-        this.repository = repository;
-    }
 
     @Transactional(isolation = Isolation.SERIALIZABLE,
             rollbackFor = { UniquenessViolationException.class })

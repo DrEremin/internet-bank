@@ -69,10 +69,6 @@ class ManagementBankAccountControllerTest {
     @BeforeAll
     void beforeAll() {
 
-        /*this.manager = new BankAccountManager(
-                this.service,
-                this.repository);*/
-
         this.dto = new ClientIdDTO(
                 1.0,
                 "1970-01-01",

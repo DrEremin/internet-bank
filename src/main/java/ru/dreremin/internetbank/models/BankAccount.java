@@ -3,8 +3,11 @@ package ru.dreremin.internetbank.models;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
-import javax.persistence.*;
 
+import javax.persistence.*;
+import lombok.Getter;
+
+@Getter
 @Entity
 @Table(name = "bank_account")
 public class BankAccount {
@@ -31,15 +34,14 @@ public class BankAccount {
     public void setId(long id) { this.id = id; }
 
     public void setCurrentBalance(BigDecimal currentBalance) {
-
         this.currentBalance = currentBalance.setScale(2, RoundingMode.DOWN);
     }
 
-    public long getId() { return id; }
+    /*public long getId() { return id; }
 
     public long getClientId() { return clientId; }
 
-    public BigDecimal getCurrentBalance() { return currentBalance; }
+    public BigDecimal getCurrentBalance() { return currentBalance; }*/
 
     @Override
     public boolean equals(Object o) {

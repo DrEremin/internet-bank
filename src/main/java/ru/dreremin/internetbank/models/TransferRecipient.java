@@ -1,10 +1,13 @@
 package ru.dreremin.internetbank.models;
 
-import javax.persistence.*;
-import ru.dreremin.internetbank.models.composite_pkeys.TransferRecipientPkey;
-
 import java.util.Objects;
 
+import javax.persistence.*;
+import lombok.AllArgsConstructor;
+
+import ru.dreremin.internetbank.models.composite_pkeys.TransferRecipientPkey;
+
+@AllArgsConstructor
 @Entity
 @Table(name = "transfer_recipient")
 public class TransferRecipient {
@@ -14,10 +17,6 @@ public class TransferRecipient {
 
     public TransferRecipient() {
         this(null);
-    }
-
-    public TransferRecipient(TransferRecipientPkey id) {
-        this.id = id;
     }
 
     @Override
@@ -31,7 +30,6 @@ public class TransferRecipient {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(id);
     }
 }

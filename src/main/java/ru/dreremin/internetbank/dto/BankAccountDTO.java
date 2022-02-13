@@ -1,5 +1,6 @@
 package ru.dreremin.internetbank.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -33,7 +34,8 @@ public abstract class BankAccountDTO {
                            String zoneId) {
 
         this.clientId = (long) clientId;
-        isRealInputNumber = (this.clientId - clientId) != 0;
+        isRealInputNumber = BigDecimal.valueOf(this.clientId)
+                .compareTo(BigDecimal.valueOf(clientId)) != 0;
         this.localDate = LocalDate.parse(localDate);
         this.localTime = LocalTime.parse(localTime);
         this.zoneId = ZoneId.of(zoneId);

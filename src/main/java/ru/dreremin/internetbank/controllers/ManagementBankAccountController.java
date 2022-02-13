@@ -1,7 +1,9 @@
 package ru.dreremin.internetbank.controllers;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
 import ru.dreremin.internetbank.dto.StatusOperationDTO;
 import ru.dreremin.internetbank.dto.impl.ClientIdDTO;
 import ru.dreremin.internetbank.exceptions.DataMissingException;
@@ -10,16 +12,12 @@ import ru.dreremin.internetbank.exceptions.UniquenessViolationException;
 import ru.dreremin.internetbank.services.BankAccountManager;
 
 @Slf4j
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/account-management")
 public class ManagementBankAccountController {
 
     private final BankAccountManager manager;
-
-    public ManagementBankAccountController(BankAccountManager manager) {
-
-        this.manager = manager;
-    }
 
     @PutMapping(value="/create", consumes="application/json")
     public StatusOperationDTO createAccount(@RequestBody ClientIdDTO dto)

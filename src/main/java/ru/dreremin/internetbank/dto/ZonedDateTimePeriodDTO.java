@@ -6,12 +6,14 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Optional;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.extern.slf4j.Slf4j;
+
 import ru.dreremin.internetbank.exceptions.DateTimeOutOfBoundsException;
 
 @Slf4j
-public class DateTimesOfPeriodWithZoneIdDTO implements Serializable {
+public class ZonedDateTimePeriodDTO implements Serializable {
 
     private final ZonedDateTime startTimePoint;
 
@@ -20,9 +22,9 @@ public class DateTimesOfPeriodWithZoneIdDTO implements Serializable {
     private final boolean isNullableTimePoint;
 
     @JsonCreator
-    public DateTimesOfPeriodWithZoneIdDTO(String startDate,
-                                          String endDate,
-                                          String zoneId) {
+    public ZonedDateTimePeriodDTO(String startDate,
+                                  String endDate,
+                                  String zoneId) {
 
         if (Optional.ofNullable(startDate).isEmpty()
                 || Optional.ofNullable(endDate).isEmpty()) {
@@ -42,11 +44,11 @@ public class DateTimesOfPeriodWithZoneIdDTO implements Serializable {
         }
     }
 
-    public ZonedDateTime getStartZonedDateTime() {
+    public ZonedDateTime getStartTimePoint() {
         return this.startTimePoint;
     }
 
-    public ZonedDateTime getEndZonedDateTime() {
+    public ZonedDateTime getEndTimePoint() {
         return this.endTimePoint;
     }
 
@@ -56,26 +58,18 @@ public class DateTimesOfPeriodWithZoneIdDTO implements Serializable {
 
     public void validation() throws DateTimeOutOfBoundsException {
 
-        try {
-            if (this.startTimePoint.toLocalDateTime()
-                    .compareTo(this.endTimePoint.toLocalDateTime()) >= 0) {
+        if (!isNullableTimePoint) {
+            try {
+                if (this.startTimePoint.toLocalDateTime()
+                        .compareTo(this.endTimePoint.toLocalDateTime()) >= 0) {
 
-                throw new DateTimeOutOfBoundsException(
-                        "Start point of time greater or equal than to end");
+                    throw new DateTimeOutOfBoundsException(
+                            "Start point of time greater or equal than to end");
+                }
+            } catch (DateTimeOutOfBoundsException e) {
+                log.error(e.getMessage());
+                throw e;
             }
-        } catch (DateTimeOutOfBoundsException e) {
-            log.error(e.getMessage());
-            throw e;
         }
     }
 }
-
-/*
-{
-    "startDate" : "yyyy-mm-dd",
-    "startTime" : "hh-mm-ss",
-    "endDate" : "yyyy-mm-dd",
-    "endTime" : "hh-mm-ss",
-    "zoneId" : "UTC+-h"
-}
- */

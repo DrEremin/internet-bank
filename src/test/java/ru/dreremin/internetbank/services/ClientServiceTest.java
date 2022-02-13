@@ -35,6 +35,7 @@ class ClientServiceTest {
 
     @BeforeAll
     void beforeAll() {
+
         this.client = new Client(
                 "Test",
                 "Testov",
@@ -42,6 +43,7 @@ class ClientServiceTest {
                 "1970-01-01",
                 "His address"
         );
+
         when(this.repository.existsById((long)0)).thenReturn(false);
         when(this.repository.existsById((long)1)).thenReturn(true);
         when(this.repository.getById((long)1)).thenReturn(this.client);
@@ -59,13 +61,11 @@ class ClientServiceTest {
 
     @Test
     void testGetClientById_IfClientWithThisIdDoesNotExist() {
-
         assertTrue(this.service.getClientById(0).isEmpty());
     }
 
     @Test
     void testGetClientById_IfClientWithThisIdIsExist() {
-
         assertTrue(this.service.getClientById(1).isPresent());
         assertEquals(LocalDate.of(1970, 1, 1),
                 this.service.getClientById(1).get().getBirthday());

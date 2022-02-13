@@ -11,13 +11,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.*;
 
-import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 
-import ru.dreremin.internetbank.dto.impl.ClientIdAndMoneyDTO;
+import ru.dreremin.internetbank.dto.impl.UpdatingFundsDTO;
 import ru.dreremin.internetbank.dto.impl.ClientIdDTO;
-import ru.dreremin.internetbank.dto.impl.SenderIdAndMoneyAndRecipientIdDTO;
+import ru.dreremin.internetbank.dto.impl.TransferMoneyDTO;
 import ru.dreremin.internetbank.exceptions.DataMissingException;
 import ru.dreremin.internetbank.exceptions.NotEnoughMoneyException;
 import ru.dreremin.internetbank.models.BankAccount;
@@ -42,10 +41,9 @@ class BankAccountServiceTest {
 
     private ClientIdDTO clientIdDTO;
 
-    private ClientIdAndMoneyDTO clientIdAndMoneyDTO;
+    private UpdatingFundsDTO updatingFundsDTO;
 
-    private SenderIdAndMoneyAndRecipientIdDTO
-            senderIdAndMoneyAndRecipientIdDTO;
+    private TransferMoneyDTO transferMoneyDTO;
 
     private BankAccount bankAccount;
 
@@ -56,6 +54,7 @@ class BankAccountServiceTest {
     private BigDecimal balance;
 
     private enum Ids {
+
         EMPTY(1),
         BANK_ACCOUNT(2),
         BANK_ACCOUNT_RECIPIENT(3);
@@ -85,15 +84,15 @@ class BankAccountServiceTest {
                 time,
                 zone);
 
-        this.clientIdAndMoneyDTO = new ClientIdAndMoneyDTO(
+        this.updatingFundsDTO = new UpdatingFundsDTO(
                 Ids.EMPTY.getId(),
                 BigDecimal.valueOf(5),
                 date,
                 time,
                 zone);
 
-        this.senderIdAndMoneyAndRecipientIdDTO =
-                new SenderIdAndMoneyAndRecipientIdDTO(
+        this.transferMoneyDTO =
+                new TransferMoneyDTO(
                         Ids.EMPTY.getId(),
                         Ids.EMPTY.getId(),
                         BigDecimal.valueOf(15),
@@ -104,7 +103,6 @@ class BankAccountServiceTest {
         this.bankAccount = new BankAccount(Ids.EMPTY.getId());
         this.bankAccount.setId(Ids.EMPTY.getId());
         this.bankAccount.setCurrentBalance(BigDecimal.valueOf(50));
-
         this.bankAccountRecipient = new BankAccount(Ids.EMPTY.getId());
         this.bankAccountRecipient.setId(Ids.BANK_ACCOUNT.getId());
         this.bankAccountRecipient.setCurrentBalance(BigDecimal.valueOf(200));
@@ -115,7 +113,6 @@ class BankAccountServiceTest {
                 .thenReturn(Optional.of(this.bankAccount));
         when(this.repository.getBankAccountByClientId((long)3))
                 .thenReturn(Optional.of(this.bankAccountRecipient));
-
         when(this.operationService.saveOperation(
                 any(ClientIdDTO.class),
                 anyLong(),
@@ -139,7 +136,6 @@ class BankAccountServiceTest {
     void testGetBalance_WhenClientWithThisIdDoesNotExist() throws DataMissingException{
 
         this.clientIdDTO.setClientId(Ids.EMPTY.getId());
-
         assertThrowsExactly(DataMissingException.class,
                 ()->this.service.getBalance(clientIdDTO));
     }
@@ -148,9 +144,7 @@ class BankAccountServiceTest {
     void testGetBalance_WhenClientWithThisIdIsExist() throws DataMissingException {
 
         this.clientIdDTO.setClientId(Ids.BANK_ACCOUNT.getId());
-
         assertDoesNotThrow(()->this.service.getBalance(this.clientIdDTO));
-
         assertEquals(0, this.service.getBalance(this.clientIdDTO)
                 .compareTo(BigDecimal.valueOf(50)));
     }
@@ -158,21 +152,18 @@ class BankAccountServiceTest {
     @Test
     void testPutMoney_WhenClientWithThisIdDoesNotExist() {
 
-        this.clientIdAndMoneyDTO.setClientId(Ids.EMPTY.getId());
-
+        this.updatingFundsDTO.setClientId(Ids.EMPTY.getId());
         assertThrowsExactly(DataMissingException.class,
-                ()->this.service.putMoney(this.clientIdAndMoneyDTO));
+                ()->this.service.putMoney(this.updatingFundsDTO));
 
     }
 
     @Test
     void testPutMoney_WhenClientWithThisIdIsExist() {
 
-        this.clientIdAndMoneyDTO.setClientId(Ids.BANK_ACCOUNT.getId());
-
+        this.updatingFundsDTO.setClientId(Ids.BANK_ACCOUNT.getId());
         assertDoesNotThrow(()->this.service
-                .putMoney(this.clientIdAndMoneyDTO));
-
+                .putMoney(this.updatingFundsDTO));
         assertEquals(0, this.bankAccount.getCurrentBalance()
                 .compareTo(BigDecimal.valueOf(55)));
     }
@@ -180,20 +171,17 @@ class BankAccountServiceTest {
     @Test
     void testTakeMoney_WhenClientWithThisIdDoesNotExist() {
 
-        this.clientIdAndMoneyDTO.setClientId(Ids.EMPTY.getId());
-
+        this.updatingFundsDTO.setClientId(Ids.EMPTY.getId());
         assertThrowsExactly(DataMissingException.class,
-                ()->this.service.takeMoney(this.clientIdAndMoneyDTO));
+                ()->this.service.takeMoney(this.updatingFundsDTO));
     }
 
     @Test
     void testTakeMoney_WhenClientWithThisIdIsExistAndIsEnoughMoney() {
 
-        this.clientIdAndMoneyDTO.setClientId(Ids.BANK_ACCOUNT.getId());
-
+        this.updatingFundsDTO.setClientId(Ids.BANK_ACCOUNT.getId());
         assertDoesNotThrow(()->this.service
-                .takeMoney(this.clientIdAndMoneyDTO));
-
+                .takeMoney(this.updatingFundsDTO));
         assertEquals(0, this.bankAccount.getCurrentBalance()
                 .compareTo(BigDecimal.valueOf(45)));
     }
@@ -202,11 +190,10 @@ class BankAccountServiceTest {
     void testTakeMoney_WhenClientWithThisIdIsExistAndIsNotEnoughMoney() {
 
         this.bankAccount.setCurrentBalance(BigDecimal.valueOf(1.0));
-        this.clientIdAndMoneyDTO.setClientId(Ids.BANK_ACCOUNT.getId());
+        this.updatingFundsDTO.setClientId(Ids.BANK_ACCOUNT.getId());
 
         assertThrowsExactly(NotEnoughMoneyException.class,
-                ()->this.service.takeMoney(this.clientIdAndMoneyDTO));
-
+                ()->this.service.takeMoney(this.updatingFundsDTO));
         assertEquals(0, this.bankAccount.getCurrentBalance()
                 .compareTo(BigDecimal.valueOf(1.0)));
     }
@@ -214,56 +201,54 @@ class BankAccountServiceTest {
     @Test
     void testTransferMoney_WhenSenderWithThisIdDoesNotExist () {
 
-        this.senderIdAndMoneyAndRecipientIdDTO.setClientId(Ids.EMPTY.getId());
-        this.senderIdAndMoneyAndRecipientIdDTO.setRecipientId(
+        this.transferMoneyDTO.setClientId(Ids.EMPTY.getId());
+        this.transferMoneyDTO.setRecipientId(
                 Ids.BANK_ACCOUNT_RECIPIENT.getId());
 
         assertThrowsExactly(DataMissingException.class,
                 ()->this.service.transferMoney(
-                        senderIdAndMoneyAndRecipientIdDTO));
+                        transferMoneyDTO));
     }
 
     @Test
     void testTransferMoney_WhenRecipientWithThisIdDoesNotExist () {
 
-        this.senderIdAndMoneyAndRecipientIdDTO
+        this.transferMoneyDTO
                 .setClientId(Ids.BANK_ACCOUNT.getId());
-        this.senderIdAndMoneyAndRecipientIdDTO
+        this.transferMoneyDTO
                 .setRecipientId(Ids.EMPTY.getId());
 
         assertThrowsExactly(DataMissingException.class,
                 ()->this.service.transferMoney(
-                        this.senderIdAndMoneyAndRecipientIdDTO));
+                        this.transferMoneyDTO));
     }
 
     @Test
     void testTransferMoney_WhenBothIdIsExistAndNotEnoughMoney() {
 
         this.bankAccount.setCurrentBalance(BigDecimal.valueOf(10));
-        this.senderIdAndMoneyAndRecipientIdDTO
+        this.transferMoneyDTO
                 .setClientId(Ids.BANK_ACCOUNT.getId());
-        this.senderIdAndMoneyAndRecipientIdDTO
+        this.transferMoneyDTO
                 .setRecipientId(Ids.BANK_ACCOUNT_RECIPIENT.getId());
 
         assertThrowsExactly(NotEnoughMoneyException.class,
                 ()->this.service.transferMoney(
-                        this.senderIdAndMoneyAndRecipientIdDTO));
+                        this.transferMoneyDTO));
     }
 
     @Test
     void testTransferMoney_WhenBothIdIsExistAndEnoughMoney() {
 
-        this.senderIdAndMoneyAndRecipientIdDTO
+        this.transferMoneyDTO
                 .setClientId(Ids.BANK_ACCOUNT.getId());
-        this.senderIdAndMoneyAndRecipientIdDTO
+        this.transferMoneyDTO
                 .setRecipientId(Ids.BANK_ACCOUNT_RECIPIENT.getId());
 
         assertDoesNotThrow(()->this.service.transferMoney(
-                this.senderIdAndMoneyAndRecipientIdDTO));
-
+                this.transferMoneyDTO));
         assertEquals(0, this.bankAccount.getCurrentBalance()
                 .compareTo(BigDecimal.valueOf(35)));
-
         assertEquals(0, this.bankAccountRecipient.getCurrentBalance()
                 .compareTo(BigDecimal.valueOf(215)));
     }

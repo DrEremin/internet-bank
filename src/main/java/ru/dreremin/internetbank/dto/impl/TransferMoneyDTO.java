@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import lombok.extern.slf4j.Slf4j;
 import ru.dreremin.internetbank.dto.BankAccountDTO;
 import ru.dreremin.internetbank.exceptions.IncorrectNumberException;
@@ -13,7 +14,7 @@ import ru.dreremin.internetbank.exceptions.SameIdException;
 @Slf4j
 @JsonIgnoreProperties(
         { "isRealInputNumber", "isRealInputNumberOfRecipientId" })
-public class SenderIdAndMoneyAndRecipientIdDTO
+public class TransferMoneyDTO
         extends BankAccountDTO implements Serializable {
 
     private long recipientId;
@@ -21,12 +22,19 @@ public class SenderIdAndMoneyAndRecipientIdDTO
     private final boolean isRealInputNumberOfRecipientId;
 
     @JsonCreator
-    public SenderIdAndMoneyAndRecipientIdDTO(double clientId,
-                                             double recipientId,
-                                             BigDecimal money,
-                                             String localDate,
-                                             String localTime,
-                                             String zoneId) {
+    @JsonIncludeProperties({
+            "clientId",
+            "recipientId",
+            "money",
+            "localDate",
+            "localTime",
+            "zoneId"})
+    public TransferMoneyDTO(double clientId,
+                            double recipientId,
+                            BigDecimal money,
+                            String localDate,
+                            String localTime,
+                            String zoneId) {
 
         super(clientId, localDate, localTime, zoneId);
         this.money = money.setScale(2, RoundingMode.DOWN);
@@ -42,13 +50,13 @@ public class SenderIdAndMoneyAndRecipientIdDTO
             if (this.isRealInputNumber
                     || this.isRealInputNumberOfRecipientId) {
                 throw new IncorrectNumberException(
-                        "Value of user id or recipient " +
-                                "id must not be real number");
+                        "Value of sender ID or recipient " +
+                                "ID must not be real number");
             }
             if (clientId <= 0 || recipientId <= 0) {
                 throw new IncorrectNumberException(
-                        "Value of user id or recipient " +
-                                "id must not be less than 1");
+                        "Value of sender ID or recipient " +
+                                "ID must not be less than 1");
             }
             if (money.compareTo(BigDecimal.valueOf(0.01)) < 0) {
                 throw new IncorrectNumberException(
@@ -56,7 +64,7 @@ public class SenderIdAndMoneyAndRecipientIdDTO
             }
             if (clientId == recipientId) {
                 throw new SameIdException(
-                        "The sender's id is equal to the recipient's id");
+                        "The sender's ID is equal to the recipient's ID");
             }
         } catch (IncorrectNumberException | SameIdException e) {
             log.error(e.toString());
